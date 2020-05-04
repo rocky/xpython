@@ -5,6 +5,7 @@ from __future__ import print_function, division
 
 
 from xpython.pyobj import Function
+from xpython.buildclass import build_class
 from xpython.byteop.byteop27 import ByteOp27
 from xpython.byteop.byteop25 import ByteOp25
 
@@ -108,6 +109,8 @@ class ByteOp32(ByteOp27):
 
     def LOAD_BUILD_CLASS(self):
         """Pushes builtins.__build_class__() onto the stack. It is later called by CALL_FUNCTION to construct a class."""
+        # not yet ready for prime time yet.
+        # self.vm.push(build_class)
         self.vm.push(__build_class__)
 
     # This opcode disappears starting in 3.5

@@ -192,7 +192,7 @@ Block = collections.namedtuple("Block", "type, handler, level")
 
 
 class Frame(object):
-    def __init__(self, f_code, f_globals, f_locals, f_back):
+    def __init__(self, f_code, f_globals, f_locals, f_closure, f_back):
         self.f_code = f_code
         self.f_globals = f_globals
         self.f_locals = f_locals
@@ -231,6 +231,19 @@ class Frame(object):
                 assert self.cells is not None
                 assert f_back.cells, "f_back.cells: %r" % (f_back.cells,)
                 self.cells[var] = f_back.cells[var]
+            if f_code.co_freevars and f_closure:
+                assert len(f_code.co_freevars) == len(f_closure)
+                self.cells.update(zip(f_code.co_freevars, f_closure))
+
+        # rocky: Arguments get added to the list of local variables.
+        # Where do we get the values from though?
+        # See test_set_attributes.py for an example of why this code
+        # is needed.
+        for name in f_code.co_varnames[:f_code.co_argcount]:
+            # FIXME: {} is to make __locals__ be sane until we figure out
+            # where the value is coming from.
+            if name not in self.f_locals:
+                self.f_locals[name] = {}
 
         self.block_stack = []
         self.generator = None

@@ -143,7 +143,7 @@ class VirtualMachine(object):
     def top_block(self):
         return self.frame.block_stack[-1]
 
-    def make_frame(self, code, callargs={}, f_globals=None, f_locals=None):
+    def make_frame(self, code, callargs={}, f_globals=None, f_locals=None, f_closure=None):
         log.debug("make_frame: code=%r, callargs=%s" % (code, repper(callargs)))
         if f_globals is not None:
             f_globals = f_globals
@@ -160,7 +160,7 @@ class VirtualMachine(object):
                 "__package__": None,
             }
         f_locals.update(callargs)
-        frame = Frame(code, f_globals, f_locals, self.frame)
+        frame = Frame(code, f_globals, f_locals, f_closure, self.frame)
         return frame
 
     def push_frame(self, frame):
