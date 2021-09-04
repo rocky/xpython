@@ -62,7 +62,7 @@ class ByteOp39(ByteOp38):
         # FIXME
         pass
 
-    def IS_OP(self, invert: int):
+    def IS_OP(self, invert):
         """Performs is comparison, or is not if invert is 1."""
         TOS1, TOS = self.vm.popn(2)
         if invert:
@@ -71,7 +71,7 @@ class ByteOp39(ByteOp38):
             self.vm.push(TOS1 is TOS)
         pass
 
-    def JUMP_IF_NOT_EXC_MATCH(self, target: int):
+    def JUMP_IF_NOT_EXC_MATCH(self, target):
         """Tests whether the second value on the stack is an exception
         matching TOS, and jumps if it is not.  Pops two values from
         the stack.
@@ -82,7 +82,7 @@ class ByteOp39(ByteOp38):
             self.vm.jump(target)
         return
 
-    def CONTAINS_OP(self, invert: int):
+    def CONTAINS_OP(self, invert):
         """Performs in comparison, or not in if invert is 1."""
         TOS1, TOS = self.vm.popn(2)
         if invert:
