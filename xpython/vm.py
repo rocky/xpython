@@ -14,7 +14,7 @@ from xdis import (
     code2num,
     CO_NEWLOCALS,
     PYTHON3,
-    PYTHON_VERSION,
+    PYTHON_VERSION_TRIPLE,
     IS_PYPY,
     op_has_argument,
     next_offset,
@@ -88,7 +88,15 @@ class PyVMUncaughtException(Exception):
 
 
 def format_instruction(
-    frame, opc, byte_name, int_arg, arguments, offset, line_number, extra_debug, vm=None
+    frame,
+    opc,
+    bytecode_name,
+    int_arg,
+    arguments,
+    offset,
+    line_number,
+    extra_debug,
+    vm=None,
 ):
     """Formats an instruction. What's a little different here is that in
     contast to Python's `dis`, or a colorized version of that, used in
@@ -99,20 +107,15 @@ def format_instruction(
     for example in MAKE_FUNCTION, and CALL_FUNCTION.
     """
     code = frame.f_code if frame else None
-    byte_code = opc.opmap.get(byte_name, 0)
+    byte_code = opc.opmap.get(bytecode_name, 0)
 
-    if vm and byte_name in vm.byteop.stack_fmt:
-        stack_args = vm.byteop.stack_fmt[byte_name](vm, int_arg)
+    if vm and bytecode_name in vm.byteop.stack_fmt:
+        stack_args = vm.byteop.stack_fmt[bytecode_name](vm, int_arg, repr)
     else:
         stack_args = ""
 
-    if vm and byte_name in vm.byteop.stack_fmt:
-        stack_args = vm.byteop.stack_fmt[byte_name](vm, int_arg, repr)
-    else:
-        stack_args = ""
-
-    if hasattr(opc, "opcode_arg_fmt") and byte_name in opc.opcode_arg_fmt:
-        argrepr = opc.opcode_arg_fmt[byte_name](int_arg)
+    if hasattr(opc, "opcode_arg_fmt") and bytecode_name in opc.opcode_arg_fmt:
+        argrepr = opc.opcode_arg_fmt[bytecode_name](int_arg)
     elif int_arg is None:
         argrepr = ""
     elif byte_code in opc.COMPARE_OPS:
@@ -127,7 +130,7 @@ def format_instruction(
         if line_number is None
         else LINE_NUMBER_WIDTH_FMT % line_number
     )
-    mess = "%s%3d: %s%s %s" % (line_str, offset, byte_name, stack_args, argrepr)
+    mess = "%s%3d: %s%s %s" % (line_str, offset, bytecode_name, stack_args, argrepr)
     if extra_debug and frame:
         mess += " %s in %s:%s" % (code.co_name, code.co_filename, frame.f_lineno)
     return mess
@@ -136,7 +139,7 @@ def format_instruction(
 class PyVM(object):
     def __init__(
         self,
-        python_version=PYTHON_VERSION,
+        python_version=PYTHON_VERSION_TRIPLE,
         is_pypy=IS_PYPY,
         vmtest_testing=False,
         format_instruction_func=format_instruction,
@@ -174,10 +177,8 @@ class PyVM(object):
         # pulled out of this file
         self.PyVMError = PyVMError
 
-        int_vers = int(python_version * 10)
-        version_info = (int_vers // 10, int_vers % 10)
         variant = "pypy" if is_pypy else None
-        self.opc = get_opcode_module(version_info, variant)
+        self.opc = get_opcode_module(python_version, variant)
         self.byteop = get_byteop(self, python_version, is_pypy)
 
     ##############################################
@@ -193,7 +194,10 @@ class PyVM(object):
     def peek(self, n):
         if n <= 0:
             raise PyVMError("Peek value must be greater than 0")
-        return self.frame.stack[-n]
+        try:
+            return self.frame.stack[-n]
+        except:
+            return 0
 
     def pop(self, i=0):
         """Pop a value from the stack.
@@ -425,12 +429,12 @@ class PyVM(object):
                 f.f_lineno = line_number
             if not replay:
                 byte_code = byteint(co_code[offset])
-            byte_name = self.opc.opname[byte_code]
+            bytecode_name = self.opc.opname[byte_code]
             arg_offset = offset + 1
             arg = None
 
             if op_has_argument(byte_code, self.opc):
-                if self.version >= 3.6:
+                if self.version >= (3, 6):
                     int_arg = code2num(co_code, arg_offset) | extended_arg
                     # Note: Python 3.6.0a1 is 2, for 3.6.a3 and beyond we have 1
                     arg_offset += 1
@@ -478,14 +482,14 @@ class PyVM(object):
                 arguments = [arg]
             break
 
-        return byte_name, byte_code, int_arg, arguments, offset, line_number
+        return bytecode_name, byte_code, int_arg, arguments, offset, line_number
 
-    def log(self, byte_name, int_arg, arguments, offset, line_number):
+    def log(self, bytecode_name, int_arg, arguments, offset, line_number):
         """Log arguments, block stack, and data stack for each opcode."""
         op = self.format_instruction(
             self.frame,
             self.opc,
-            byte_name,
+            bytecode_name,
             int_arg,
             arguments,
             offset,
@@ -501,26 +505,26 @@ class PyVM(object):
         log.debug("  %sblocks     : %s" % (indent, block_stack_rep))
         log.info("%s%s" % (indent, op))
 
-    def dispatch(self, byte_name, int_arg, arguments, offset, line_number):
-        """Dispatch by byte_name to the corresponding methods.
+    def dispatch(self, bytecode_name, int_arg, arguments, offset, line_number):
+        """Dispatch by bytecode_name to the corresponding methods.
         Exceptions are caught and set on the virtual machine."""
 
         why = None
         self.in_exception_processing = False
         byteop = self.byteop
         try:
-            if byte_name.startswith("UNARY_"):
-                byteop.unaryOperator(byte_name[6:])
-            elif byte_name.startswith("BINARY_"):
-                byteop.binaryOperator(byte_name[7:])
-            elif byte_name.startswith("INPLACE_"):
-                byteop.inplaceOperator(byte_name[8:])
-            elif "SLICE+" in byte_name:
-                self.sliceOperator(byte_name)
+            if bytecode_name.startswith("UNARY_"):
+                byteop.unaryOperator(bytecode_name[6:])
+            elif bytecode_name.startswith("BINARY_"):
+                byteop.binaryOperator(bytecode_name[7:])
+            elif bytecode_name.startswith("INPLACE_"):
+                byteop.inplaceOperator(bytecode_name[8:])
+            elif "SLICE+" in bytecode_name:
+                self.sliceOperator(bytecode_name)
             else:
                 # dispatch
-                if hasattr(byteop, byte_name):
-                    bytecode_fn = getattr(byteop, byte_name, None)
+                if hasattr(byteop, bytecode_name):
+                    bytecode_fn = getattr(byteop, bytecode_name, None)
                 if not bytecode_fn:  # pragma: no cover
                     raise PyVMError(
                         "Unknown bytecode type: %s\n\t%s"
@@ -528,14 +532,14 @@ class PyVM(object):
                             self.format_instruction(
                                 self.frame,
                                 self.opc,
-                                byte_name,
+                                bytecode_name,
                                 int_arg,
                                 arguments,
                                 offset,
                                 line_number,
                                 False,
                             ),
-                            byte_name,
+                            bytecode_name,
                         )
                     )
                 why = bytecode_fn(*arguments)
@@ -554,7 +558,7 @@ class PyVM(object):
                             % self.format_instruction(
                                 self.frame,
                                 self.opc,
-                                byte_name,
+                                bytecode_name,
                                 int_arg,
                                 arguments,
                                 offset,
@@ -592,7 +596,7 @@ class PyVM(object):
             self.jump(block.handler)
             return why
 
-        if self.version < 3.0:
+        if self.version < (3, 0):
             if (
                 block.type == "finally"
                 or (block.type == "setup-except" and why == "exception")
@@ -664,7 +668,7 @@ class PyVM(object):
         while True:
 
             (
-                byte_name,
+                bytecode_name,
                 byte_code,
                 int_arg,
                 arguments,
@@ -672,11 +676,11 @@ class PyVM(object):
                 line_number,
             ) = self.parse_byte_and_args(byte_code)
             if log.isEnabledFor(logging.INFO):
-                self.log(byte_name, int_arg, arguments, offset, line_number)
+                self.log(bytecode_name, int_arg, arguments, offset, line_number)
 
             # When unwinding the block stack, we need to keep track of why we
             # are doing it.
-            why = self.dispatch(byte_name, int_arg, arguments, offset, line_number)
+            why = self.dispatch(bytecode_name, int_arg, arguments, offset, line_number)
             if why == "exception":
                 # TODO: ceval calls PyTraceBack_Here, not sure what that does.
 
@@ -691,7 +695,7 @@ class PyVM(object):
                                 % self.format_instruction(
                                     frame,
                                     self.opc,
-                                    byte_name,
+                                    bytecode_name,
                                     int_arg,
                                     arguments,
                                     offset,

@@ -4,7 +4,7 @@ from __future__ import print_function, division
 
 import inspect
 
-from xdis import PYTHON_VERSION
+from xdis.version_info import PYTHON_VERSION_TRIPLE
 from xpython.byteop.byteop24 import ByteOp24, Version_info
 from xpython.byteop.byteop35 import ByteOp35
 from xpython.pyobj import Function
@@ -12,8 +12,11 @@ from xpython.pyobj import Function
 # Gone in 3.6
 del ByteOp24.MAKE_CLOSURE
 del ByteOp24.CALL_FUNCTION_VAR
-del ByteOp24.CALL_FUNCTION_KW
-del ByteOp24.CALL_FUNCTION_VAR_KW
+
+# Even though Python 3.6 loses CALL_FUNCTION_VAR_KW, PyPy retains this for 3.6.
+# It is gone though in 3.7. So we will keep this around for one more version than
+# would be needed if we were doing strictly CPython 3.6
+# del ByteOp24.CALL_FUNCTION_VAR_KW
 
 # Note the order is important. The TOS is listed *last*.
 MAKE_FUNCTION_SLOT_NAMES = ("closure", "annotations", "kwdefaults", "defaults")
@@ -26,7 +29,7 @@ def identity(x):
 
 FSTRING_CONVERSION_MAP = {0: identity, 1: str, 2: repr}
 
-if PYTHON_VERSION > 2.7:
+if PYTHON_VERSION_TRIPLE >= (3, 0):
     FSTRING_CONVERSION_MAP[3] = ascii
 
 # Code with these co_names have an implicit .0 in them
@@ -35,11 +38,13 @@ COMPREHENSION_FN_NAMES = frozenset(
 )
 
 
-def fmt_call_function(vm, argc, repr=repr):
+def fmt_call_function(vm, argc, repr=repr) -> str:
     """
     returns the name of the function from the code object in the stack
     """
-    TOS = vm.peek(argc + 1)
+    name_default, pos_args = divmod(argc, 256)
+    TOS = vm.peek(pos_args + 1)
+    # FIXME: give info on pos_args. Right now this is okay only for pos_args == 0
     for attr in ("co_name", "func_name", "__name__"):
         if hasattr(TOS, attr):
             return " (%s)" % getattr(TOS, attr)
@@ -48,7 +53,7 @@ def fmt_call_function(vm, argc, repr=repr):
     return ""
 
 
-def fmt_call_function_kw(vm, argc, repr=repr):
+def fmt_call_function_kw(vm, argc, repr=repr) -> str:
     """
     returns the name of the function from the code object in the stack
     """
@@ -178,7 +183,7 @@ class ByteOp36(ByteOp35):
         if (
             not inspect.iscode(code)
             and hasattr(code, "to_native")
-            and self.version == PYTHON_VERSION
+            and self.version_info[:2] == PYTHON_VERSION_TRIPLE[:2]
         ):
             code = code.to_native()
 

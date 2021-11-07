@@ -6,13 +6,12 @@ Note: this is subclassed so later versions may use operations from here.
 
 import sys
 
-# FIXME: we should use:
-from copy import deepcopy
+from xdis.version_info import PYTHON_VERSION_TRIPLE
 
-from xdis import PYTHON_VERSION
-
-if PYTHON_VERSION > 2.7:
+try:
     import importlib
+except ImportError:
+    importlib = None
 
 from xpython.byteop.byteop import fmt_binary_op
 from xpython.byteop.byteop24 import fmt_make_function, Version_info
@@ -46,7 +45,18 @@ class ByteOp26(ByteOp25):
         level, fromlist = self.vm.popn(2)
         frame = self.vm.frame
 
-        if PYTHON_VERSION > 2.7:
+        if importlib is not None:
+            module_spec = importlib.util.find_spec(name)
+            module = importlib.util.module_from_spec(module_spec)
+
+            load_module = (
+                module_spec.loader.exec_module
+                if hasattr(module_spec.loader, "exec_module")
+                else module_spec.loader.load_module
+            )
+            load_module(module)
+
+        elif PYTHON_VERSION_TRIPLE >= (3, 0):
             # This should make a *copy* of the module so we keep interpreter and
             # intpreted programs separate.
             # See below for how we handle "sys" import
@@ -61,14 +71,8 @@ class ByteOp26(ByteOp25):
         # FIXME: generalize this
         if name in sys.builtin_module_names:
             # FIXME: do more here.
-            if PYTHON_VERSION != self.float_version:
+            if PYTHON_VERSION_TRIPLE[:2] != self.version_info[:2]:
                 if name == "sys":
-
-                    # Safe to import this way
-                    if PYTHON_VERSION > 3.4:
-                        module_spec = importlib.util.find_spec(name)
-                        module = importlib.util.module_from_spec(module_spec)
-
                     module.version_info = self.version_info
                     module.version = self.version
                     pass
@@ -84,7 +88,7 @@ class ByteOp26(ByteOp25):
         function also has argc default parameters, where are found
         before the cells.
         """
-        if self.float_version >= 3.3:
+        if self.version_info[:2] >= (3, 3):
             name = self.vm.pop()
         else:
             name = None
