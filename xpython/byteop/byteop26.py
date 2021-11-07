@@ -10,8 +10,14 @@ from xdis.version_info import PYTHON_VERSION_TRIPLE
 
 try:
     import importlib
+
+    try:
+        import importlib.util as importlib_util
+    except ImportError:
+        importlib_util = None
 except ImportError:
     importlib = None
+    importlib_util = None
 
 from xpython.byteop.byteop import fmt_binary_op
 from xpython.byteop.byteop24 import fmt_make_function, Version_info
@@ -45,8 +51,8 @@ class ByteOp26(ByteOp25):
         level, fromlist = self.vm.popn(2)
         frame = self.vm.frame
 
-        if importlib is not None:
-            module_spec = importlib.util.find_spec(name)
+        if importlib_util is not None and hasattr(importlib_util, "find_spec"):
+            module_spec = importlib_util.find_spec(name)
             module = importlib.util.module_from_spec(module_spec)
 
             load_module = (
