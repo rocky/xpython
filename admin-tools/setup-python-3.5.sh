@@ -9,6 +9,7 @@ mydir=$(dirname $bs)
 fulldir=$(readlink -f $mydir)
 cd $fulldir/..
 (cd ../python-xdis && ./admin-tools/setup-python-3.3.sh)
+(cd ../python-uncompyle6 && ./admin-tools/setup-python-3.3.sh)
 cd $owd
 rm -v */.python-version || true
 

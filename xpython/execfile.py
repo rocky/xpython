@@ -223,7 +223,8 @@ def run_python_file(
 
                 if not source_is_older(code.co_filename, filename):
                     print(
-                        f"warning source file {code.co_filename} is newer than bytecode {filename}"
+                        "warning source file %s is newer than bytecode %s"
+                        % (code.co_filename, filename)
                     )
                     pass
 
