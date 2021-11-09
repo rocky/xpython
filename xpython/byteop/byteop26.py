@@ -4,6 +4,7 @@
 Note: this is subclassed so later versions may use operations from here.
 """
 
+import os
 import sys
 
 from xdis.version_info import PYTHON_VERSION_TRIPLE
@@ -51,27 +52,41 @@ class ByteOp26(ByteOp25):
         level, fromlist = self.vm.popn(2)
         frame = self.vm.frame
 
-        if importlib_util is not None and hasattr(importlib_util, "find_spec"):
-            module_spec = importlib_util.find_spec(name)
-            module = importlib.util.module_from_spec(module_spec)
+        # if PYTHON_VERSION_TRIPLE >= (3, 0):
+        #     # This should make a *copy* of the module so we keep interpreter and
+        #     # interpreted programs separate.
+        #     # See below for how we handle "sys" import
+        #     # FIXME: should split on ".". Doesn't work for, say, os.path
+        #     if level < 0:
+        #         level = 0
+        #     module = importlib.__import__(
+        #         name, frame.f_globals, frame.f_locals, fromlist, level
+        #     )
+        # else:
+        #     module = __import__(name, frame.f_globals, frame.f_locals, fromlist, level)
 
-            load_module = (
-                module_spec.loader.exec_module
-                if hasattr(module_spec.loader, "exec_module")
-                else module_spec.loader.load_module
-            )
-            load_module(module)
-
-        elif PYTHON_VERSION_TRIPLE >= (3, 0):
-            # This should make a *copy* of the module so we keep interpreter and
-            # intpreted programs separate.
-            # See below for how we handle "sys" import
-            if level < 0:
+        # INVESTIGATE: the above doesn't work for things like "import os.path as osp"
+        # The module it finds ins os.posixpath which doesn't have a "path" attribute
+        # while the below finds "os" which does have a "path" attribute.
+        #
+        assert level >= -1, "Invalid Level number %s on IMPORT_NAME" % level
+        module = None
+        if level == -1:
+            # In Python 2.6 added the level parameter and it was -1 by default until but not including 3.0.
+            # -1 means try relative imports before absolute imports.
+            if PYTHON_VERSION_TRIPLE >= (3, 0, 0):
+                # FIXME: give warning that we can't handle absolute import. Or fix up code to handle possible absolute import.
                 level = 0
-            module = importlib.__import__(
-                name, frame.f_globals, frame.f_locals, fromlist, level
-            )
-        else:
+            else:
+                module = __import__(
+                    "." + os.sep + name,
+                    frame.f_globals,
+                    frame.f_locals,
+                    fromlist,
+                    level,
+                )
+
+        if module is None:
             module = __import__(name, frame.f_globals, frame.f_locals, fromlist, level)
 
         # FIXME: generalize this

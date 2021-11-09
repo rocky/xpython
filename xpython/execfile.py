@@ -1,6 +1,7 @@
 """Execute files of Python code."""
 
 import os
+import os.path as osp
 import sys
 import tokenize
 import mimetypes
@@ -9,7 +10,7 @@ from xdis.version_info import PYTHON_VERSION_TRIPLE, version_tuple_to_str
 
 from xpython.vm import format_instruction, PyVM, PyVMUncaughtException
 from xpython.vmtrace import PyVMTraced
-from xpython.version import SUPPORTED_PYTHON, SUPPORTED_BYTECODE, SUPPORTED_PYPY
+from xpython.version_info import SUPPORTED_PYTHON, SUPPORTED_BYTECODE, SUPPORTED_PYPY
 
 # To silence the "import imp" DeprecationWarning below
 import warnings
@@ -43,6 +44,16 @@ class NoSourceError(Exception):
     """For raising errors when we can't find source code."""
 
     pass
+
+
+def source_is_older(source_path, bytecode_path):
+    """
+    Check that the modification time on `source_path` is before the modification.
+    """
+    try:
+        return os.stat(source_path).st_mtime > os.stat(bytecode_path).st_mtime
+    except FileNotFoundError:
+        return None
 
 
 def exec_code_object(
@@ -183,7 +194,7 @@ def run_python_file(
     if package:
         sys.path[0] = ""
     else:
-        sys.path[0] = os.path.abspath(os.path.dirname(filename))
+        sys.path[0] = osp.abspath(osp.dirname(filename))
 
     is_pypy = IS_PYPY
     try:
@@ -208,7 +219,14 @@ def run_python_file(
                         "We only support byte code for %s: %r is %2.1f bytecode"
                         % (mess, filename, python_version)
                     )
-                pass
+                main_mod.__file__ = code.co_filename
+
+                if not source_is_older(code.co_filename, filename):
+                    print(
+                        f"warning source file {code.co_filename} is newer than bytecode {filename}"
+                    )
+                    pass
+
             else:
                 source_file = open_source(filename)
                 try:
