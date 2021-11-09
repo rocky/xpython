@@ -1,5 +1,5 @@
 #!/bin/bash
-PYTHON_VERSION=3.5.10
+PYTHON_VERSION=3.3.7
 pyenv local $PYTHON_VERSION
 
 owd=$(pwd)
@@ -13,4 +13,4 @@ cd $fulldir/..
 cd $owd
 rm -v */.python-version || true
 
-git checkout python-3.5  && git pull && pyenv local $PYTHON_VERSION
+git checkout python-3.3  && git pull && pyenv local $PYTHON_VERSION
