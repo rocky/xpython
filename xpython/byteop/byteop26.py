@@ -77,14 +77,6 @@ class ByteOp26(ByteOp25):
             if PYTHON_VERSION_TRIPLE >= (3, 0, 0):
                 # FIXME: give warning that we can't handle absolute import. Or fix up code to handle possible absolute import.
                 level = 0
-            else:
-                module = __import__(
-                    "." + os.sep + name,
-                    frame.f_globals,
-                    frame.f_locals,
-                    fromlist,
-                    level,
-                )
 
         if module is None:
             module = __import__(name, frame.f_globals, frame.f_locals, fromlist, level)
