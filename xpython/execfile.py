@@ -52,7 +52,7 @@ def source_is_older(source_path, bytecode_path):
     """
     try:
         return os.stat(source_path).st_mtime > os.stat(bytecode_path).st_mtime
-    except FileNotFoundError:
+    except OSError:
         return None
 
 
