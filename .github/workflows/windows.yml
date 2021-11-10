@@ -2,9 +2,9 @@ name: xpython (windows)
 
 on:
   push:
-    branches: [ python-3.5 ]
+    branches: [ python-2.4-to-2.7 ]
   pull_request:
-    branches: [ python-3.5 ]
+    branches: [ python-2.4-to-2.7 ]
 
 jobs:
   build:
@@ -12,7 +12,7 @@ jobs:
     strategy:
       matrix:
         os: [windows]
-        python-version: [3.5]
+        python-version: [2.7]
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}
