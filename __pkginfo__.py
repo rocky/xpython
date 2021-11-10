@@ -39,7 +39,7 @@ if PYTHON_VERSION_TRIPLE[:2] not in supported_versions:
     print("We only support %s; you have %sPython %s" % (mess, python, sys.version_info))
     raise Exception(mess)
 
-if (3, 0) <= PYTHON_VERSION_TRIPLE < (3, 3):
+if (3, 0) <= PYTHON_VERSION_TRIPLE < (3, 3) and PYTHON_VERSION_TRIPLE[:2] != (2, 7):
     click_version = "<= 4.0"
 else:
     click_version = ""
