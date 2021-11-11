@@ -36,7 +36,7 @@ COMPREHENSION_FN_NAMES = frozenset(
 )
 
 
-def fmt_call_function(vm, argc, repr=repr) -> str:
+def fmt_call_function(vm, argc, repr=repr):
     """
     returns the name of the function from the code object in the stack
     """
@@ -51,7 +51,7 @@ def fmt_call_function(vm, argc, repr=repr) -> str:
     return ""
 
 
-def fmt_call_function_kw(vm, argc, repr=repr) -> str:
+def fmt_call_function_kw(vm, argc, repr=repr):
     """
     returns the name of the function from the code object in the stack
     """
