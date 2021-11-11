@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 """Byte Interpreter operations for Python 3.2
 """
-from __future__ import print_function, division
-
-
 from xpython.byteop.byteop24 import ByteOp24, Version_info
 from xpython.byteop.byteop27 import ByteOp27
 from xpython.pyobj import Function
@@ -133,6 +130,8 @@ class ByteOp32(ByteOp27):
 
     def LOAD_BUILD_CLASS(self):
         """Pushes builtins.__build_class__() onto the stack. It is later called by CALL_FUNCTION to construct a class."""
+        # FIXME:
+        # raise self.vm.PyVMError("Not implemented yet for Python 2.7")
         self.vm.push(__build_class__)
 
     # This opcode disappears starting in 3.5

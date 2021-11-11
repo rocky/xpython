@@ -1,7 +1,5 @@
 """Bytecode Interpreter operations for Python 3.6
 """
-from __future__ import print_function, division
-
 import inspect
 
 from xdis.version_info import PYTHON_VERSION_TRIPLE
@@ -38,7 +36,7 @@ COMPREHENSION_FN_NAMES = frozenset(
 )
 
 
-def fmt_call_function(vm, argc, repr=repr) -> str:
+def fmt_call_function(vm, argc, repr=repr):
     """
     returns the name of the function from the code object in the stack
     """
@@ -53,7 +51,7 @@ def fmt_call_function(vm, argc, repr=repr) -> str:
     return ""
 
 
-def fmt_call_function_kw(vm, argc, repr=repr) -> str:
+def fmt_call_function_kw(vm, argc, repr=repr):
     """
     returns the name of the function from the code object in the stack
     """
