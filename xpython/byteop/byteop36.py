@@ -1,3 +1,8 @@
+# Copyright (C) 2021 Rocky Bernstein
+# This program comes with ABSOLUTELY NO WARRANTY.
+# This is free software, and you are welcome to redistribute it
+# under certain conditions.
+# See the documentation for the full license.
 """Bytecode Interpreter operations for Python 3.6
 """
 import inspect
@@ -36,7 +41,7 @@ COMPREHENSION_FN_NAMES = frozenset(
 )
 
 
-def fmt_call_function(vm, argc, repr=repr) -> str:
+def fmt_call_function(vm, argc, repr=repr):
     """
     returns the name of the function from the code object in the stack
     """
@@ -51,7 +56,7 @@ def fmt_call_function(vm, argc, repr=repr) -> str:
     return ""
 
 
-def fmt_call_function_kw(vm, argc, repr=repr) -> str:
+def fmt_call_function_kw(vm, argc, repr=repr):
     """
     returns the name of the function from the code object in the stack
     """

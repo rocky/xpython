@@ -85,6 +85,10 @@ def fmt_make_function(vm, arg=None, repr=repr):
 class ByteOp24(ByteOpBase):
     def __init__(self, vm):
         super(ByteOp24, self).__init__(vm)
+
+        # Superclasses can overwrite this. But default to not PyPy.
+        self.is_pypy = False
+
         self.stack_fmt["MAKE_FUNCTION"] = fmt_make_function
         # Not for 2.4
         self.stack_fmt["CALL_FUNCTION"] = fmt_call_function
