@@ -443,13 +443,13 @@ class ByteOp24(ByteOpBase):
 
     # Building
 
-    def BUILD_TUPLE(self, count: int):
+    def BUILD_TUPLE(self, count):
         """Creates a tuple consuming count items from the stack, and pushes
         the resulting tuple onto the stack.
         """
         self.build_container(count, tuple)
 
-    def BUILD_LIST(self, count: int):
+    def BUILD_LIST(self, count):
         """Works as BUILD_TUPLE, but creates a list."""
         elts = self.vm.popn(count)
         self.vm.push(elts)

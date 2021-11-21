@@ -46,18 +46,17 @@ class VmTestCase(unittest.TestCase):
         self.version_pair = PYTHON_VERSION_TRIPLE[:2]
         assert self.version_pair in supported_versions
 
-        platform = "pypy" if IS_PYPY else ""
         basename = parent_function_name()
         if IS_PYPY:
             version = version_tuple_to_str(end=2, delimiter="")
-            platform = "pypy"
             path = osp.join(
-                srcdir, f"bytecode-pypy{version}", f"{basename}.pypy{version}.pyc"
+                srcdir,
+                "bytecode-pypy%s" % version,
+                "%s.pypy%s.pyc" % (basename, version),
             )
         else:
-            platform = ""
             version = version_tuple_to_str(end=2)
-            path = osp.join(srcdir, f"bytecode-{platform}{version}", f"{basename}.pyc")
+            path = osp.join(srcdir, "bytecode-%s" % version, "%s.pyc" % basename)
 
         self.assert_ok(path, arg_type="bytecode-file")
 
