@@ -173,6 +173,3 @@ class ByteOp27(ByteOp26):
             self.vm.jump(target)
         else:
             self.vm.pop()
-
-    def JUMP_ABSOLUTE(self, target):
-        self.vm.jump(target)
