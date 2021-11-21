@@ -1,4 +1,10 @@
 # -*- coding: utf-8 -*-
+# Copyright (C) 2021 Rocky Bernstein
+# This program comes with ABSOLUTELY NO WARRANTY.
+# This is free software, and you are welcome to redistribute it
+# under certain conditions.
+# See the documentation for the full license.
+
 """Bytecode Interpreter operations for Python 3.9
 """
 from xpython.byteop.byteop24 import Version_info
@@ -46,19 +52,25 @@ class ByteOp39(ByteOp38):
 
     def RERAISE(self):
         # FIXME
+        raise RuntimeError("RERAISE not implemented yet")
         pass
 
     def WITH_EXCEPT_START(self):
         # FIXME
+        raise RuntimeError("WITH_EXCEPT_START not implemented yet")
         pass
 
     def LOAD_ASSERTION_ERROR(self):
-        # FIXME
-        pass
+        """
+        Pushes AssertionError onto the stack. Used by the `assert` statement.
+        """
+        self.vm.push(AssertionError)
 
     def LIST_TO_TUPLE(self):
-        # FIXME
-        pass
+        """
+        Pops a list from the stack and pushes a tuple containing the same values.
+        """
+        self.vm.push(tuple(vm.pop()))
 
     def IS_OP(self, invert):
         """Performs is comparison, or is not if invert is 1."""
@@ -76,7 +88,7 @@ class ByteOp39(ByteOp38):
         """
         TOS1, TOS = self.vm.popn(2)
         # FIXME: not sure what operation should be used to test not "matches".
-        if TOS1 != TOS:
+        if not issubclass(TOS1, TOS):
             self.vm.jump(target)
         return
 

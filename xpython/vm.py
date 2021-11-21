@@ -474,11 +474,15 @@ class PyVM(object):
                 elif byte_code in self.opc.JREL_OPS:
                     # Many relative jumps are conditional,
                     # so setting f.fallthrough is wrong.
+                    if self.version >= (3, 10, 0):
+                        int_arg += int_arg
                     arg = arg_offset + int_arg
                 elif byte_code in self.opc.JABS_OPS:
                     # We probably could set fallthough, since many (all?)
                     # of these are unconditional, but we'll make the jump do
                     # the work of setting.
+                    if self.version >= (3, 10, 0):
+                        int_arg += int_arg
                     arg = int_arg
                 elif byte_code in self.opc.LOCAL_OPS:
                     arg = f_code.co_varnames[int_arg]
