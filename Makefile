@@ -10,7 +10,7 @@ PYTHON3 ?= python3
 RM      ?= rm
 LINT    = flake8
 SHELL   ?= bash
-SKIP_COMPAT ?= 1
+SKIP_COMPAT ?= 0
 
 .PHONY: all check check-compat check-full clean unittest dist distclean lint flake8 test rmChangeLog clean_pyc
 
@@ -23,8 +23,7 @@ check:
 	$(MAKE) -C test check
 
 #: Check across all Python versions
-check-full:
-	SKIP_COMPAT=$(SKIP_COMPAT) bash ./admin-tools/check-versions.sh
+check-full: check
 
 # There is a bug somewhere that causes check-compat not to run
 # when run with the other tests.
