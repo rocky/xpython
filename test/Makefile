@@ -7,7 +7,7 @@ PYTHON3 ?= python3
 RM      ?= rm
 LINT    = flake8
 SHELL   ?= bash
-SKIP_COMPAT ?= 1
+SKIP_COMPAT ?= 0
 
 #: Default target - same as "check"
 all: check
