@@ -264,12 +264,12 @@ class ByteOp24(ByteOpBase):
         self.vm.return_value = dest
         return "continue"
 
-    def LIST_APPEND(self, count):
+    def LIST_APPEND(self):
         """Calls list.append(TOS1, TOS). Used to implement list
         comprehensions.
         """
         val = self.vm.pop()
-        the_list = self.vm.peek(count)
+        the_list = self.vm.pop()
         the_list.append(val)
 
     def LOAD_LOCALS(self):
@@ -383,8 +383,12 @@ class ByteOp24(ByteOpBase):
         STORE_GLOBAL if possible."""
         self.vm.frame.f_locals[name] = self.vm.pop()
 
+    def DELETE_GLOBAL(self, name):
+        """Implements del name, where name in global."""
+        del self.vm.frame.f_globals[name]
+
     def DELETE_NAME(self, name):
-        """Implements del name, where namei is the index into co_names attribute of the code object."""
+        """Implements del name, where name is the index into co_names attribute of the code object."""
         del self.vm.frame.f_locals[name]
 
     def UNPACK_SEQUENCE(self, count):
@@ -546,10 +550,16 @@ class ByteOp24(ByteOpBase):
         """
         mod = self.vm.top()
         if not hasattr(mod, name):
-            value = ImportError(
-                "cannot import name '%s' from '%s' (%s)"
-                % (name, mod.__name__, mod.__file__)
-            )
+            if not hasattr(mod, "__file__"):
+                # Builtins don't have a __file__ attribute
+                value = ImportError(
+                    "cannot import name '%s' from '%s'" % (name, mod.__name__)
+                )
+            else:
+                value = ImportError(
+                    "cannot import name '%s' from '%s' (%s)"
+                    % (name, mod.__name__, mod.__file__)
+                )
 
             self.vm.last_exception = (ImportError, value, None)
             return "exception"
