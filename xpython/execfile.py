@@ -5,8 +5,13 @@ import os.path as osp
 import sys
 import tokenize
 import mimetypes
-from xdis import load_module, IS_PYPY
-from xdis.version_info import PYTHON_VERSION_TRIPLE, version_tuple_to_str
+from xdis.version_info import (
+    IS_PYPY,
+    PYTHON_VERSION,
+    PYTHON_VERSION_TRIPLE,
+    version_tuple_to_str,
+)
+from xdis import load_module
 
 from xpython.vm import format_instruction, PyVM, PyVMUncaughtException
 from xpython.vmtrace import PyVMTraced
