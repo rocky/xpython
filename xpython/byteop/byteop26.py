@@ -6,6 +6,7 @@ Note: this is subclassed so later versions may use operations from here.
 
 import os
 import sys
+import xpython.stdlib
 
 from xdis.version_info import PYTHON_VERSION_TRIPLE
 
@@ -52,7 +53,22 @@ class ByteOp26(ByteOp25):
         level, fromlist = self.vm.popn(2)
         frame = self.vm.frame
 
-        # if PYTHON_VERSION_TRIPLE >= (3, 0):
+        # Should we replace import "name" with a compatabliity version?
+        if name in xpython.stdlib.__all__:
+            name = "xpython.stdlib.%s" % name
+
+        # if importlib is not None:
+        #     module_spec = importlib.util.find_spec(name)
+        #     module = importlib.util.module_from_spec(module_spec)
+
+        #     load_module = (
+        #         module_spec.loader.exec_module
+        #         if hasattr(module_spec.loader, "exec_module")
+        #         else module_spec.loader.load_module
+        #     )
+        #     load_module(module)
+
+        # elif PYTHON_VERSION_TRIPLE >= (3, 0):
         #     # This should make a *copy* of the module so we keep interpreter and
         #     # interpreted programs separate.
         #     # See below for how we handle "sys" import

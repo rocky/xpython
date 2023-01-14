@@ -14,6 +14,7 @@ from xdis.version_info import (
 from xdis import load_module
 
 from xpython.vm import format_instruction, PyVM, PyVMUncaughtException
+from xpython.stdlib.builtins import make_compatible_builtins
 from xpython.vmtrace import PyVMTraced
 from xpython.version_info import SUPPORTED_PYTHON, SUPPORTED_BYTECODE, SUPPORTED_PYPY
 
@@ -86,6 +87,8 @@ def exec_code_object(
             )
             callback("fatal", 0, "fatalOpcode", 0, -1, event_arg, [], vm)
     else:
+        if python_version != PYTHON_VERSION_TRIPLE[:2]:
+            make_compatible_builtins(BUILTINS.__dict__, python_version)
         vm = PyVM(python_version, is_pypy, format_instruction_func=format_instruction)
         try:
             vm.run_code(code, f_globals=env)
@@ -96,10 +99,10 @@ def exec_code_object(
 def get_supported_versions(is_pypy, is_bytecode):
     if is_bytecode:
         supported_versions = SUPPORTED_BYTECODE
-        mess = "Python 2.4 .. 2.7, 3.2 .. 3.9"
+        mess = "Python 2.4 .. 2.7, 3.2 .. 3.10"
     else:
         supported_versions = SUPPORTED_PYPY if IS_PYPY else SUPPORTED_PYTHON
-        mess = "PYPY 2.7, 3.2, 3.5 and 3.6" if is_pypy else "CPython 2.7, 3.2 .. 3.9"
+        mess = "PYPY 2.7, 3.2, 3.5 and 3.6" if is_pypy else "CPython 2.7, 3.2 .. 3.10"
     return supported_versions, mess
 
 
@@ -221,10 +224,11 @@ def run_python_file(
                 )
                 if python_version[:2] not in supported_versions:
                     raise WrongBytecodeError(
-                        "We only support byte code for %s: %r is %2.1f bytecode"
-                        % (mess, filename, python_version)
+                        "We only support byte code for %s: %r is %s bytecode"
+                        % (mess, filename, version_tuple_to_str(python_version))
                     )
                 main_mod.__file__ = code.co_filename
+                make_compatible_builtins(main_mod.__builtins__.__dict__, python_version)
 
                 if source_is_older(code.co_filename, filename):
                     print(
@@ -297,10 +301,10 @@ def run_python_string(
 
     try:
         supported_versions, mess = get_supported_versions(IS_PYPY, is_bytecode=False)
-        if PYTHON_VERSION not in supported_versions:
+        if PYTHON_VERSION_TRIPLE[:2] not in supported_versions:
             raise CannotCompileError(
                 "We need %s to compile source code; you are running %s"
-                % (mess, PYTHON_VERSION)
+                % (mess, version_tuple_to_str())
             )
 
         # `compile` still needs the last line to be clean,
