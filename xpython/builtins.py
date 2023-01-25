@@ -4,8 +4,6 @@ A place to implement built-in functions.
 We use the bytecode for these when doing cross-version interpreting
 """
 
-from typing import Any
-
 from xpython.pyobj import Function, Cell, make_cell
 from xdis import codeType2Portable, PYTHON_VERSION_TRIPLE, IS_PYPY
 
@@ -112,7 +110,7 @@ def build_class(opc, func, name, *bases, **kwds):
 
 
 # FIXME: change to return a true Proxy object.
-def builtin_super(self: Any, typ=None, obj = None):
+def builtin_super(self, typ=None, obj = None):
     """
     super() but first argument is filled in via interpreter
     """
@@ -133,7 +131,7 @@ class WrappedSuperClass(object):
     proxy object that delegates method calls to a parent or sibling class of ``type``.
     See https://docs.python.org/3.7/library/functions.html#super
     """
-    def __init__(self, start_class, typ, obj: Any):
+    def __init__(self, start_class, typ, obj):
 
         if obj is not None:
             assert isinstance(obj, typ)
@@ -153,10 +151,10 @@ class WrappedSuperClass(object):
         if not self.type_given is None and self.object is None:
             obj_str = "NULL"
         elif self.object is not None:
-            obj_str = f"<{self.object.__class__.__name__} object>"
+            obj_str = "<%s object>" % self.object.__class__.__name_
         else:
             obj_str = repr(self.type)
-        return f"<super: {self.start_class}, {obj_str}>"
+        return "<super: %s, %s>" % (self.start_class, obj_str)
 
     def init(self, *args, **kwargs):
         return self.__orig_init__(self, *args, **kwargs)

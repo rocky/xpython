@@ -2,8 +2,6 @@
 Compatiability of built-in functions between different Python versions
 """
 
-from typing import Any, Callable
-
 from xdis.version_info import PYTHON_VERSION_TRIPLE
 
 if PYTHON_VERSION_TRIPLE >= (3, 0):
@@ -51,7 +49,7 @@ def make_compatible_builtins(builtins: dict, target_python: tuple):
                     )
 
 
-def apply(f: Callable, args=None, kwargs=None) -> Any:
+def apply(f, args=None, kwargs=None):
     """
     Python 1-2.x apply for Python 3.x
     """
