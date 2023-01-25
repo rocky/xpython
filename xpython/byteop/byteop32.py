@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """Byte Interpreter operations for Python 3.2
 """
+
+import inspect
 from xpython.byteop.byteop24 import ByteOp24, Version_info
 from xpython.byteop.byteop27 import ByteOp27
 from xpython.pyobj import Function
