@@ -3,6 +3,8 @@
 """
 
 import inspect
+
+from xpython.byteop.byteop import parse_fn_counts_30_35
 from xpython.byteop.byteop24 import ByteOp24, Version_info
 from xpython.byteop.byteop27 import ByteOp27
 from xpython.pyobj import Function
@@ -34,10 +36,6 @@ def fmt_make_function(vm, arg=None, repr=repr):
     name = fn_item if isinstance(fn_item, str) else fn_item.co_name
     return " (%s)" % name
 
-# FIXME: in the future we can get this from xdis
-def parse_fn_counts(argc):
-    return ((argc & 0xFF), (argc >> 8) & 0xFF)
-
 
 class ByteOp32(ByteOp27):
     def __init__(self, vm):
@@ -59,7 +57,7 @@ class ByteOp32(ByteOp27):
         free variables. The function also has argc default parameters,
         which are found below the cells.
         """
-        default_count, kw_default_count = parse_fn_counts(argc)
+        default_count, kw_default_count = parse_fn_counts_30_35(argc)
 
         code = self.vm.pop()
         name = code.co_name
@@ -131,7 +129,7 @@ class ByteOp32(ByteOp27):
         variables. args is interpreted as in MAKE_FUNCTION;
         the annotations and defauits are also in the same order below TOS2
         """
-        default_count, kw_default_count = parse_fn_counts(argc)
+        default_count, kw_default_count = parse_fn_counts_30_35(argc)
         name = None
         closure, code = self.vm.popn(2)
 

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
-import sys
 import os.path as osp
+import sys
+
 from xdis.version_info import IS_PYPY, PYTHON_VERSION_TRIPLE, version_tuple_to_str
 
 # We do this crazy conversion from float to support Python 2.6 which
@@ -33,14 +34,18 @@ if IS_PYPY:
     platform = "pypy"
     bytecode_path = osp.normpath(
         osp.join(
-            get_srcdir(), f"bytecode-pypy{version}", f"{basename}.pypy{version}.pyc"
+            get_srcdir(),
+            "bytecode-pypy%s" % version,
+            "%s.pypy%s.pyc" % (basename, version),
         )
     )
 else:
     platform = ""
     version = version_tuple_to_str(end=2)
     bytecode_path = osp.normpath(
-        osp.join(get_srcdir(), f"bytecode-{platform}{version}", f"{basename}.pyc")
+        osp.join(
+            get_srcdir(), "bytecode-%s%s" % (platform, version), "%s.pyc" % basename
+        )
     )
 
 import py_compile
