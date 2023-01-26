@@ -11,14 +11,19 @@ Version_info = namedtuple("version_info", "major minor micro releaselevel serial
 # FIXME: we should use:
 # from copy import deepcopy
 
-import operator
 import logging
-import six
+import operator
 import sys
+
+import six
 from xdis.version_info import PYTHON_VERSION_TRIPLE
 
 if PYTHON_VERSION_TRIPLE >= (3, 0):
     import importlib
+
+    import_fn = importlib.__import__
+else:
+    import_fn = __import__
 
 from xpython.byteop.byteop import (
     ByteOpBase,
@@ -518,14 +523,9 @@ class ByteOp24(ByteOpBase):
         """
         frame = self.vm.frame
 
-        if PYTHON_VERSION_TRIPLE > (2, 7):
-            module = importlib.__import__(
-                name, frame.f_globals, frame.f_locals, fromlist=None, level=0
-            )
-        else:
-            module = __import__(
-                name, frame.f_globals, frame.f_locals, fromlist=None, level=0
-            )
+        module = import_fn(
+            name, frame.f_globals, frame.f_locals, fromlist=None, level=0
+        )
 
         # FIXME: generalize this
         if name in sys.builtin_module_names:
@@ -857,7 +857,7 @@ class ByteOp24(ByteOpBase):
             return self.call_function(argc, var_args=[], keyword_args={})
         except TypeError as exc:
             tb = self.vm.last_traceback = traceback_from_frame(self.vm.frame)
-            self.vm.last_exception = (TypeError, exc.args, tb)
+            self.vm.last_exception = (TypeError, exc, tb)
             return "exception"
 
     def CALL_FUNCTION_VAR(self, argc):

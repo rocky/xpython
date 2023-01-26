@@ -5,7 +5,7 @@ We use the bytecode for these when doing cross-version interpreting
 """
 
 from xpython.pyobj import Function, Cell, make_cell
-from xdis import codeType2Portable, PYTHON_VERSION, IS_PYPY
+from xdis import codeType2Portable, PYTHON_VERSION_TRIPLE, IS_PYPY
 
 
 def func_code(func):
@@ -56,7 +56,7 @@ def build_class(opc, func, name, *bases, **kwds):
     python_implementation = "PyPy" if IS_PYPY else "CPython"
 
     if not (
-        opc.version == PYTHON_VERSION
+        opc.version_tuple == PYTHON_VERSION_TRIPLE[:2]
         and python_implementation == opc.python_implementation
     ):
         # convert code to xdis's portable code type.
@@ -108,6 +108,56 @@ def build_class(opc, func, name, *bases, **kwds):
         cell.set(cls)
     return cls
 
+
+# FIXME: change to return a true Proxy object.
+def builtin_super(self, typ=None, obj = None):
+    """
+    super() but first argument is filled in via interpreter
+    """
+    cells = self.cells
+    if hasattr(cells, "__class__"):
+        cell = cells["__class__"]
+    elif hasattr(cells, "__classcell__"):
+        cell = cells["__classcell__"]
+
+    start_class=cell.get()
+    return WrappedSuperClass(start_class, typ, obj)
+
+    return None
+
+class WrappedSuperClass(object):
+    """
+    builtin "super" object return type. This is a
+    proxy object that delegates method calls to a parent or sibling class of ``type``.
+    See https://docs.python.org/3.7/library/functions.html#super
+    """
+    def __init__(self, start_class, typ, obj):
+
+        if obj is not None:
+            assert isinstance(obj, typ)
+
+        self.type_given = typ is not None
+        if self.type_given:
+            start_class = typ
+        self.start_class = start_class
+        self.superclass = start_class.__mro__[1]
+        self.__orig_init__ = self.superclass.__init__
+        self.__init__ = self.init
+        self.object = obj
+        self.type = typ
+
+
+    def __repr__(self):
+        if not self.type_given is None and self.object is None:
+            obj_str = "NULL"
+        elif self.object is not None:
+            obj_str = "<%s object>" % self.object.__class__.__name_
+        else:
+            obj_str = repr(self.type)
+        return "<super: %s, %s>" % (self.start_class, obj_str)
+
+    def init(self, *args, **kwargs):
+        return self.__orig_init__(self, *args, **kwargs)
 
 # From Pypy 3.6
 # def find_metaclass(bases, namespace, globals, builtin):

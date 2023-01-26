@@ -11,7 +11,28 @@ import logging
 import sys
 from xdis.version_info import PYTHON_VERSION_TRIPLE, version_tuple_to_str
 from xpython.pyobj import Function
-from xpython.builtins import build_class
+from xpython.builtins import build_class, builtin_super
+
+# FIXME: in the future we can get this from xdis
+def parse_fn_counts_30_35(argc: int) -> tuple:
+    """
+    In Python 3.3 to 3.5 MAKE_CLOSURE and MAKE_FUNCTION encode
+    arguments counts of positional, default + named, and annotation
+    arguments a particular kind of encoding where each of
+    the entry a a packe byted value of the lower 24 bits
+    of ``argc``.  The high bits of argc may have come from
+    an EXTENDED_ARG instruction. Here, we unpack the values
+    from the ``argc`` int and return a triple of the
+    positional args, named_args, and annotation args.
+    """
+    annotate_count = (argc >> 16) & 0x7FFF
+    # For some reason that I don't understand, annotate_args is off by one
+    # when there is an EXENDED_ARG instruction from what is documented in
+    # https://docs.python.org/3.4/library/dis.html#opcode-MAKE_CLOSURE
+    if annotate_count > 1:
+        annotate_count -= 1
+    return ((argc & 0xFF), (argc >> 8) & 0xFF, annotate_count)
+
 
 log = logging.getLogger(__name__)
 
@@ -258,8 +279,8 @@ class ByteOpBase(object):
                     isinstance(init_fn, Function)
                     or self.is_pypy
                     or self.version_info[:2] != PYTHON_VERSION_TRIPLE[:2]
-                ) and PYTHON_VERSION_TRIPLE >= (3, 4):
-                    # 3.4+ __build_class__() works only on bytecode that matches the CPython interpeter,
+                ) and PYTHON_VERSION_TRIPLE >= (3, 3):
+                    # 3.3+ __build_class__() works only on bytecode that matches the CPython interpeter,
                     # so use Darius' version instead.
                     # Down the line we will try to do this universally, but it is tricky:
                     retval = build_class(self.vm.opc, *pos_args, **named_args)
@@ -302,6 +323,12 @@ class ByteOpBase(object):
             and self.version_info[:2] == PYTHON_VERSION_TRIPLE[:2]
         ):
             log.debug("calling native function %s" % func.__name__)
+        elif (
+            inspect.isclass(func)
+        ):
+            if func.__name__ == "super":
+                pos_args = [self.vm.frame] + pos_args
+                func = builtin_super
 
         retval = func(*pos_args, **named_args)
         self.vm.push(retval)

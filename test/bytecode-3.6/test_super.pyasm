@@ -1,0 +1,158 @@
+# pydisasm version 6.1.0.dev0
+# Python bytecode 3.6 (3379)
+# Disassembled from Python 3.3.7 (default, Nov 17 2019, 18:03:23) 
+# [GCC 9.2.1 20191008]
+# Timestamp in code: 1674614474 (2023-01-24 21:41:14)
+# Source code size mod 2**32: 312 bytes
+# Method Name:       <module>
+# Filename:          examples/class/test_super.py
+# Argument count:    0
+# Keyword-only arguments: 0
+# Number of locals:  0
+# Stack size:        3
+# Flags:             0x00000040 (NOFREE)
+# First Line:        1
+# Constants:
+#    0: 5
+#    1: <Code3 code object MakeClosureTest at 0x7f3d2c4fcf10, file examples/class/test_super.py>, line 2
+#    2: 'MakeClosureTest'
+#    3: 'dev'
+#    4: True
+#    5: None
+# Names:
+#    0: a
+#    1: MakeClosureTest
+#    2: x
+#    3: dev
+#    4: AssertionError
+#    5: b
+  1:           0 |64 00| LOAD_CONST           (5)
+               2 |5a 00| STORE_NAME           (a)
+
+  2:           4 |47 00| LOAD_BUILD_CLASS
+               6 |64 01| LOAD_CONST           (<Code3 code object MakeClosureTest at 0x7f3d2c4fcf10, file examples/class/test_super.py>, line 2)
+               8 |64 02| LOAD_CONST           ('MakeClosureTest')
+              10 |84 00| MAKE_FUNCTION        ('MakeClosureTest': Neither defaults, keyword-only args, annotations, nor closures)
+              12 |64 02| LOAD_CONST           ('MakeClosureTest')
+              14 |83 02| CALL_FUNCTION        (2 positional arguments)
+              16 |5a 01| STORE_NAME           (MakeClosureTest)
+
+ 10:          18 |65 01| LOAD_NAME            (MakeClosureTest)
+              20 |64 03| LOAD_CONST           ('dev')
+              22 |64 04| LOAD_CONST           (True)
+              24 |83 02| CALL_FUNCTION        (MakeClosureTest: 2 positional arguments)
+              26 |5a 02| STORE_NAME           (x)
+
+ 11:          28 |65 02| LOAD_NAME            (x)
+              30 |6a 03| LOAD_ATTR            (x.dev)
+              32 |64 03| LOAD_CONST           ('dev')
+              34 |6b 02| COMPARE_OP           (==)
+              36 |73 2a| POP_JUMP_IF_TRUE     (to 42)
+              38 |74 04| LOAD_GLOBAL          (AssertionError)
+              40 |82 01| RAISE_VARARGS        (AssertionError)
+
+ 12:     >>   42 |65 02| LOAD_NAME            (x)
+              44 |6a 05| LOAD_ATTR            (x.b)
+              46 |64 04| LOAD_CONST           (True)
+              48 |6b 02| COMPARE_OP           (==)
+              50 |73 38| POP_JUMP_IF_TRUE     (to 56)
+              52 |74 04| LOAD_GLOBAL          (AssertionError)
+              54 |82 01| RAISE_VARARGS        (AssertionError)
+
+ 13:     >>   56 |65 02| LOAD_NAME            (x)
+              58 |6a 00| LOAD_ATTR            (x.a)
+              60 |64 00| LOAD_CONST           (5)
+              62 |6b 02| COMPARE_OP           (==)
+              64 |73 46| POP_JUMP_IF_TRUE     (to 70)
+              66 |74 04| LOAD_GLOBAL          (AssertionError)
+              68 |82 01| RAISE_VARARGS        (AssertionError)
+         >>   70 |64 05| LOAD_CONST           (None)
+              72 |53 00| RETURN_VALUE         (None)
+
+
+# Method Name:       MakeClosureTest
+# Filename:          examples/class/test_super.py
+# Argument count:    0
+# Keyword-only arguments: 0
+# Number of locals:  0
+# Stack size:        4
+# Flags:             0x00000000 (0x0)
+# First Line:        2
+# Constants:
+#    0: 'MakeClosureTest'
+#    1: ('dev', 'b')
+#    2: <Code3 code object __init__ at 0x7f3d2c4fc710, file examples/class/test_super.py>, line 4
+#    3: 'MakeClosureTest.__init__'
+# Names:
+#    0: __name__
+#    1: __module__
+#    2: __qualname__
+#    3: str
+#    4: bool
+#    5: __init__
+#    6: __classcell__
+# Cell variables:
+#    0: __class__
+  2:           0 |65 00| LOAD_NAME            (__name__)
+               2 |5a 01| STORE_NAME           (__module__)
+               4 |64 00| LOAD_CONST           ('MakeClosureTest')
+               6 |5a 02| STORE_NAME           (__qualname__)
+
+  4:           8 |65 03| LOAD_NAME            (str)
+              10 |65 04| LOAD_NAME            (bool)
+              12 |64 01| LOAD_CONST           (('dev', 'b'))
+              14 |9c 02| BUILD_CONST_KEY_MAP  2
+              16 |87 00| LOAD_CLOSURE         (__class__)
+              18 |66 01| BUILD_TUPLE          1
+              20 |64 02| LOAD_CONST           (<Code3 code object __init__ at 0x7f3d2c4fc710, file examples/class/test_super.py>, line 4)
+              22 |64 03| LOAD_CONST           ('MakeClosureTest.__init__')
+              24 |84 0c| MAKE_FUNCTION        ('MakeClosureTest.__init__': annotation, closure)
+              26 |5a 05| STORE_NAME           (__init__)
+              28 |87 00| LOAD_CLOSURE         (__class__)
+              30 |04 00| DUP_TOP
+              32 |5a 06| STORE_NAME           (__classcell__)
+              34 |53 00| RETURN_VALUE
+
+
+# Method Name:       __init__
+# Filename:          examples/class/test_super.py
+# Argument count:    3
+# Keyword-only arguments: 0
+# Number of locals:  3
+# Stack size:        2
+# Flags:             0x00000003 (NEWLOCALS | OPTIMIZED)
+# First Line:        4
+# Constants:
+#    0: None
+# Names:
+#    0: super
+#    1: __init__
+#    2: dev
+#    3: b
+#    4: a
+# Varnames:
+#	self, dev, b
+# Positional arguments:
+#	self, dev, b
+# Free variables:
+#    0: __class__
+  5:           0 |74 00| LOAD_GLOBAL          (super)
+               2 |83 00| CALL_FUNCTION        (super: 0 positional arguments)
+               4 |6a 01| LOAD_ATTR            (__init__)
+               6 |83 00| CALL_FUNCTION        (0 positional arguments.__init__: 0 positional arguments)
+               8 |01 00| POP_TOP
+
+  6:          10 |7c 01| LOAD_FAST            (dev)
+              12 |7c 00| LOAD_FAST            (self)
+              14 |5f 02| STORE_ATTR           (dev)
+
+  7:          16 |7c 02| LOAD_FAST            (b)
+              18 |7c 00| LOAD_FAST            (self)
+              20 |5f 03| STORE_ATTR           (b)
+
+  8:          22 |74 04| LOAD_GLOBAL          (a)
+              24 |7c 00| LOAD_FAST            (self)
+              26 |5f 04| STORE_ATTR           (a)
+              28 |64 00| LOAD_CONST           (None)
+              30 |53 00| RETURN_VALUE         (None)
+
