@@ -17,7 +17,7 @@ else:
     import_fn = __import__
 
 
-def make_compatible_builtins(builtins: dict, target_python: tuple):
+def make_compatible_builtins(builtins, target_python):
     """
     Add functions in builtins dictionary with functions that do the same
     thing.
@@ -37,7 +37,7 @@ def make_compatible_builtins(builtins: dict, target_python: tuple):
         stdlib_mod = getattr(module_root, "stdlib")
         if hasattr(stdlib_mod, short_name):
             module = getattr(stdlib_mod, short_name)
-            needs_compat = module.builtins - builtins.keys()
+            needs_compat = module.builtins - set(builtins.keys())
             for builtin_name in needs_compat:
                 if builtin_name in compatable_fns:
                     # print("XXX", builtin_name)
@@ -63,7 +63,7 @@ def breakpoint(*args, **kwargs):
     print("Not implmeneted yet")
 
 
-def cmp(x, y) -> int:
+def cmp(x, y):
     """
     Python 1-2.x cmp (compare) for Python 3.x
     """
@@ -73,7 +73,7 @@ def cmp(x, y) -> int:
 numeric_types = (int, float, complex)
 
 
-def coerce(x, y) -> tuple:
+def coerce(x, y):
     """
     Python 1-2.x coerce for Python 3.x
     """
@@ -86,7 +86,7 @@ def coerce(x, y) -> tuple:
     return x, y
 
 
-def execfile(path: str):
+def execfile(path):
     """
     Python 1-2.x execfile for Python 3.x
     """

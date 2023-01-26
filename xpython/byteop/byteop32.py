@@ -72,7 +72,7 @@ class ByteOp32(ByteOp27):
         # raise self.vm.PyVMError("Not implemented yet for Python 2.7")
         self.vm.push(__build_class__)
 
-    def MAKE_CLOSURE(self, argc: int):
+    def MAKE_CLOSURE(self, argc):
         """
         Creates a new function object, sets its ``__closure__`` slot, and
         pushes it on the stack. TOS is the code qualified name of the
@@ -126,7 +126,7 @@ class ByteOp32(ByteOp27):
 
     # Changed from 2.7
     # 3.2 has kwdefaults that aren't allowed in 2.7
-    def MAKE_FUNCTION(self, argc: int):
+    def MAKE_FUNCTION(self, argc):
         """
         Pushes a new function object on the stack. From bottom to top, the consumed stack must consist of:
 
@@ -239,7 +239,7 @@ class ByteOp32(ByteOp27):
         """Pops TOS from the stack and stores it as the current frames f_locals. This is used in class construction."""
         self.vm.frame.f_locals = self.vm.pop()
 
-    def RAISE_VARARGS(self, argc: int):
+    def RAISE_VARARGS(self, argc):
         """
         Raises an exception. argc indicates the number of arguments to the
         raise statement, ranging from 0 to 3. The handler will find

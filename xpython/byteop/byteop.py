@@ -14,7 +14,7 @@ from xpython.pyobj import Function
 from xpython.builtins import build_class, builtin_super
 
 # FIXME: in the future we can get this from xdis
-def parse_fn_counts_30_35(argc: int) -> tuple:
+def parse_fn_counts_30_35(argc):
     """
     In Python 3.3 to 3.5 MAKE_CLOSURE and MAKE_FUNCTION encode
     arguments counts of positional, default + named, and annotation

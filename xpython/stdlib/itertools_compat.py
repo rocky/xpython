@@ -12,5 +12,4 @@ for name, value in itertools.__dict__.items():
 if sys.version_info >= (3, 0):
     izip_longest = itertools.zip_longest
 else:
-    import pdb; pdb.set_trace()
     zip_longest = itertools.izip_longest
