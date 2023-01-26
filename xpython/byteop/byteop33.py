@@ -66,7 +66,6 @@ class ByteOp33(ByteOp32):
 
         self.vm.push(fn)
 
-    # Changed from 3.2; 3.3 adds annotations.
     def MAKE_FUNCTION(self, argc):
         """
         Pushes a new function object on the stack. From bottom to top, the consumed stack must consist of:
