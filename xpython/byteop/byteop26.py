@@ -9,6 +9,8 @@ import sys
 
 from xdis.version_info import PYTHON_VERSION_TRIPLE
 
+import xpython.stdlib
+
 try:
     import importlib
 
@@ -21,7 +23,7 @@ except ImportError:
     importlib_util = None
 
 from xpython.byteop.byteop import fmt_binary_op
-from xpython.byteop.byteop24 import fmt_make_function, Version_info
+from xpython.byteop.byteop24 import Version_info, fmt_make_function
 from xpython.byteop.byteop25 import ByteOp25
 from xpython.pyobj import Function
 
@@ -52,7 +54,22 @@ class ByteOp26(ByteOp25):
         level, fromlist = self.vm.popn(2)
         frame = self.vm.frame
 
-        # if PYTHON_VERSION_TRIPLE >= (3, 0):
+        # Should we replace import "name" with a compatabliity version?
+        if name in xpython.stdlib.__all__:
+            name = "xpython.stdlib.%s" % name
+
+        # if importlib is not None:
+        #     module_spec = importlib.util.find_spec(name)
+        #     module = importlib.util.module_from_spec(module_spec)
+
+        #     load_module = (
+        #         module_spec.loader.exec_module
+        #         if hasattr(module_spec.loader, "exec_module")
+        #         else module_spec.loader.load_module
+        #     )
+        #     load_module(module)
+
+        # elif PYTHON_VERSION_TRIPLE >= (3, 0):
         #     # This should make a *copy* of the module so we keep interpreter and
         #     # interpreted programs separate.
         #     # See below for how we handle "sys" import
@@ -102,17 +119,13 @@ class ByteOp26(ByteOp25):
 
     def MAKE_CLOSURE(self, argc):
         """
-        Creates a new function object, sets its func_closure slot, and
+        Creates a new function object, sets its ``func_closure`` slot, and
         pushes it on the stack. TOS is the code associated with the
-        function. If the code object has N free variables, the next N
-        items on the stack are the cells for these variables. The
-        function also has argc default parameters, where are found
-        before the cells.
+        function, TOS1 the tuple containing cells for the closure’s
+        free variables. The function also has ``argc`` default parameters,
+        which are found below the cells.
         """
-        if self.version_info[:2] >= (3, 3):
-            name = self.vm.pop()
-        else:
-            name = None
+        name = None
         closure, code = self.vm.popn(2)
         defaults = self.vm.popn(argc)
         globs = self.vm.frame.f_globals
