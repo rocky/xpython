@@ -236,7 +236,7 @@ def run_python_file(
                         % (code.co_filename, filename)
                     )
                     # Hack to update test code. Remove when we have a standalone program to fix.
-                    # os.system(f"/bin/bash ./add-single-test.sh {code.co_filename}")
+                    # os.system("/bin/bash ./add-single-test.sh %s" % code.co_filename)
                     pass
 
             else:
