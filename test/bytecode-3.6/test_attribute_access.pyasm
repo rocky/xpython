@@ -1,0 +1,131 @@
+# pydisasm version 6.0.6.dev0
+# Python bytecode 3.6 (3379)
+# Disassembled from Python 3.3.7 (default, Nov 17 2019, 18:03:23) 
+# [GCC 9.2.1 20191008]
+# Timestamp in code: 1593690857 (2020-07-02 07:54:17)
+# Source code size mod 2**32: 251 bytes
+# Method Name:       <module>
+# Filename:          examples/basic/test_attribute_access.py
+# Argument count:    0
+# Keyword-only arguments: 0
+# Number of locals:  0
+# Stack size:        4
+# Flags:             0x00000040 (NOFREE)
+# First Line:        4
+# Constants:
+#    0: 'This program is self-checking!'
+#    1: <Code3 code object Thing at 0x7fb4587bced0, file examples/basic/test_attribute_access.py>, line 6
+#    2: 'Thing'
+#    3: 17
+#    4: 23
+#    5: None
+# Names:
+#    0: __doc__
+#    1: object
+#    2: Thing
+#    3: t
+#    4: z
+#    5: AssertionError
+#    6: x
+  4:           0 |64 00| LOAD_CONST           ('This program is self-checking!')
+               2 |5a 00| STORE_NAME           (__doc__)
+
+  6:           4 |47 00| LOAD_BUILD_CLASS
+               6 |64 01| LOAD_CONST           (<Code3 code object Thing at 0x7fb4587bced0, file examples/basic/test_attribute_access.py>, line 6)
+               8 |64 02| LOAD_CONST           ('Thing')
+              10 |84 00| MAKE_FUNCTION        ('Thing': Neither defaults, keyword-only args, annotations, nor closures)
+              12 |64 02| LOAD_CONST           ('Thing')
+              14 |65 01| LOAD_NAME            (object)
+              16 |83 03| CALL_FUNCTION        (3 positional arguments)
+              18 |5a 02| STORE_NAME           (Thing)
+
+ 10:          20 |65 02| LOAD_NAME            (Thing)
+              22 |83 00| CALL_FUNCTION        (Thing: 0 positional arguments)
+              24 |5a 03| STORE_NAME           (t)
+
+ 12:          26 |65 02| LOAD_NAME            (Thing)
+              28 |6a 04| LOAD_ATTR            (Thing.z)
+              30 |64 03| LOAD_CONST           (17)
+              32 |6b 02| COMPARE_OP           (==)
+              34 |73 28| POP_JUMP_IF_TRUE     (to 40)
+              36 |74 05| LOAD_GLOBAL          (AssertionError)
+              38 |82 01| RAISE_VARARGS        (AssertionError)
+
+ 13:     >>   40 |65 03| LOAD_NAME            (t)
+              42 |6a 04| LOAD_ATTR            (t.z)
+              44 |64 03| LOAD_CONST           (17)
+              46 |6b 02| COMPARE_OP           (==)
+              48 |73 36| POP_JUMP_IF_TRUE     (to 54)
+              50 |74 05| LOAD_GLOBAL          (AssertionError)
+              52 |82 01| RAISE_VARARGS        (AssertionError)
+
+ 14:     >>   54 |65 03| LOAD_NAME            (t)
+              56 |6a 06| LOAD_ATTR            (t.x)
+              58 |64 04| LOAD_CONST           (23)
+              60 |6b 02| COMPARE_OP           (==)
+              62 |73 44| POP_JUMP_IF_TRUE     (to 68)
+              64 |74 05| LOAD_GLOBAL          (AssertionError)
+              66 |82 01| RAISE_VARARGS        (AssertionError)
+         >>   68 |64 05| LOAD_CONST           (None)
+              70 |53 00| RETURN_VALUE         (None)
+
+
+# Method Name:       Thing
+# Filename:          examples/basic/test_attribute_access.py
+# Argument count:    0
+# Keyword-only arguments: 0
+# Number of locals:  0
+# Stack size:        2
+# Flags:             0x00000040 (NOFREE)
+# First Line:        6
+# Constants:
+#    0: 'Thing'
+#    1: 17
+#    2: <Code3 code object __init__ at 0x7fb4587bc910, file examples/basic/test_attribute_access.py>, line 8
+#    3: 'Thing.__init__'
+#    4: None
+# Names:
+#    0: __name__
+#    1: __module__
+#    2: __qualname__
+#    3: z
+#    4: __init__
+  6:           0 |65 00| LOAD_NAME            (__name__)
+               2 |5a 01| STORE_NAME           (__module__)
+               4 |64 00| LOAD_CONST           ('Thing')
+               6 |5a 02| STORE_NAME           (__qualname__)
+
+  7:           8 |64 01| LOAD_CONST           (17)
+              10 |5a 03| STORE_NAME           (z)
+
+  8:          12 |64 02| LOAD_CONST           (<Code3 code object __init__ at 0x7fb4587bc910, file examples/basic/test_attribute_access.py>, line 8)
+              14 |64 03| LOAD_CONST           ('Thing.__init__')
+              16 |84 00| MAKE_FUNCTION        ('Thing.__init__': Neither defaults, keyword-only args, annotations, nor closures)
+              18 |5a 04| STORE_NAME           (__init__)
+              20 |64 04| LOAD_CONST           (None)
+              22 |53 00| RETURN_VALUE         (None)
+
+
+# Method Name:       __init__
+# Filename:          examples/basic/test_attribute_access.py
+# Argument count:    1
+# Keyword-only arguments: 0
+# Number of locals:  1
+# Stack size:        2
+# Flags:             0x00000043 (NOFREE | NEWLOCALS | OPTIMIZED)
+# First Line:        8
+# Constants:
+#    0: None
+#    1: 23
+# Names:
+#    0: x
+# Varnames:
+#	self
+# Positional arguments:
+#	self
+  9:           0 |64 01| LOAD_CONST           (23)
+               2 |7c 00| LOAD_FAST            (self)
+               4 |5f 00| STORE_ATTR           (x)
+               6 |64 00| LOAD_CONST           (None)
+               8 |53 00| RETURN_VALUE         (None)
+
