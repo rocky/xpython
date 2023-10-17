@@ -13,7 +13,7 @@ jobs:
     # To see the list of pre-built images that CircleCI provides for most common languages see
     # https://circleci.com/docs/2.0/circleci-images/
     docker:
-      - image: circleci/python:3.7.11
+      - image: circleci/python:3.8
     steps:
     # Machine Setup
     #   If you break your build into multiple jobs with workflows, you will probably want to do the parts of this that are relevant in each
@@ -36,7 +36,13 @@ jobs:
           # fallback to using the latest cache if no exact match is found
           - v2-dependencies-
 
-    - run: pip install --user -e .
+    - run:
+        command: | # Use pip to install dependengcies
+          sudo pip install --user --upgrade setuptools
+          # Until the next release
+          sudo pip install git+https://github.com/rocky/python-xdis#egg=xdis
+          pip install --user -e .
+          pip install --user -r requirements-dev.txt
 
     # Save dependency cache
     - save_cache:
