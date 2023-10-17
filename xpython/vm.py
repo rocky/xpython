@@ -230,6 +230,10 @@ class PyVM(object):
         """Push values onto the value stack."""
         self.frame.stack.extend(vals)
 
+    def set(self, i: int, value):
+        """Set a value at stack position i."""
+        self.frame.stack[-i] = value
+
     def top(self):
         """Return the value at the top of the stack, with no changes."""
         return self.frame.stack[-1]
@@ -261,6 +265,14 @@ class PyVM(object):
         # added a debugger for x-python that relies on
         # self.frame.f_last_i being correct.
         self.frame.f_lasti = jump
+        self.frame.fallthrough = False
+
+    def jump_relative(self, delta: int):
+        """Adjust the bytecode pointer by `deleta`, so it will execute next,
+        However we subtract one from the offset, because fetching the
+        next instruction adds one before fetching.
+        """
+        self.frame.f_lasti += delta
         self.frame.fallthrough = False
 
     def make_frame(
