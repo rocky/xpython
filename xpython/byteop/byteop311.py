@@ -7,9 +7,10 @@
 """Bytecode Interpreter operations for Python 3.11
 """
 
+from typing import Any
 from xpython.byteop.byteop24 import Version_info
 from xpython.byteop.byteop310 import ByteOp310
-
+from xpython.pyobj import traceback_from_frame
 
 class ByteOp311(ByteOp310):
     def __init__(self, vm):
@@ -18,6 +19,13 @@ class ByteOp311(ByteOp310):
         self.version = "3.11.0 (default, Oct 27 1955, 00:00:00)\n[x-python]"
         self.version_info = Version_info(3, 11, 0, "final", 0)
 
+    def call_function38(self, argc: int) -> Any:
+        func = self.vm.peek(argc + 1)
+        named_args = self.vm.pop()
+        pos_args = self.vm.popn(argc - 1)
+
+        func = self.vm.pop()
+        return self.call_function_with_args_resolved(func, pos_args, named_args)
     # Changed in 3.11...
 
     # New in 3.11.
@@ -52,26 +60,80 @@ class ByteOp311(ByteOp310):
     #     self.vm.push(len(self.vm.pop()))
     #     raise self.vm.PyVMError("MATCH_COPY_DICT_WITHOUT_KEYS not implemented")
 
-    def CALL(self):
-        """
-        To be continued...
-        """
-        # FIXME
-        raise self.vm.PyVMError("CALL not implemented")
+    def CALL(self, argc: int):
+        """Calls a callable object with the number of arguments
+        specified by argc, including the named arguments specified by
+        the preceding KW_NAMES, if any. On the stack are (in ascending
+        order), either:
 
-    def KW_NAMES(self):
+        * NULL
+        * The callable
+        * The positional arguments
+        * The named arguments
+
+        or:
+
+        * The callable
+        * self
+        * The remaining positional arguments
+        * The named arguments
+
+        argc is the total of the positional and named arguments,
+        excluding self when a NULL is not present.
+
+        CALL pops all arguments and the callable object off the stack,
+        calls the callable object with those arguments, and pushes the
+        return value returned by the callable object.
+
+        Replaces CALL_FUNCTION
+
         """
-        To be continued...
+        try:
+            return self.call_function38(argc)
+        except TypeError as exc:
+            tb = self.vm.last_traceback = traceback_from_frame(self.vm.frame)
+            self.vm.last_exception = (TypeError, exc, tb)
+            return "exception"
+
+    def KW_NAMES(self, consti: int):
+        """
+        Prefixes CALL. Stores a reference to co_consts[consti] into an internal variable
+        for use by CALL. co_consts[consti] must be a tuple of strings.
+
+        Replaces CALL_FUNCTION_KW
         """
         # FIXME
         raise self.vm.PyVMError("KW_NAMES not implemented")
 
-    def PRECALL(self):
+    def PRECALL(self, argc: int):
         """
-        To be continued...
+        `meth` is NULL when LOAD_METHOD thinks that it's not
+        a method call.
+
+        Stack layout:
+
+               ... | NULL | callable | arg1 | ... | argN
+                                                    ^- TOP()
+                                       ^- (-oparg)
+                            ^- (-oparg-1)
+                     ^- (-oparg-2)
+
+       `callable` will be POPed by call_function.
+        NULL will will be POPed manually later.
+        If `meth` isn't NULL, it's a method call.  Stack layout:
+
+             ... | method | self | arg1 | ... | argN
+                                                ^- TOP()
+                                   ^- (-oparg)
+                            ^- (-oparg-1)
+                   ^- (-oparg-2)
+
+       `self` and `method` will be POPed by call_function.
+        We'll be passing `oparg + 1` to call_function, to
+        make it accept the `self` as a first argument.
+
         """
-        # FIXME
-        raise self.vm.PyVMError("KW_NAMES not implemented")
+        raise self.vm.PyVMError("PRECALL not implemented")
 
     def PUSH_NULL(self):
         """
