@@ -17,6 +17,7 @@ from xdis import (
     op_has_argument,
     next_offset,
 )
+from xdis.cross_types import UnicodeForPython3
 from xdis.op_imports import get_opcode_module
 from xdis.opcodes.opcode_311 import _nb_ops
 
@@ -475,6 +476,8 @@ class PyVM(object):
 
                 if byte_code in self.opc.CONST_OPS:
                     arg = f_code.co_consts[int_arg]
+                    if isinstance(arg, UnicodeForPython3):
+                        arg = str(arg)
                 elif byte_code in self.opc.FREE_OPS:
                     if int_arg < len(f_code.co_cellvars):
                         arg = f_code.co_cellvars[int_arg]
@@ -483,6 +486,8 @@ class PyVM(object):
                         arg = f_code.co_freevars[var_idx]
                 elif byte_code in self.opc.NAME_OPS:
                     arg = f_code.co_names[int_arg]
+                    if isinstance(arg, UnicodeForPython3):
+                        arg = str(arg)
                 elif byte_code in self.opc.JREL_OPS:
                     # Many relative jumps are conditional,
                     # so setting f.fallthrough is wrong.
@@ -498,6 +503,8 @@ class PyVM(object):
                     arg = int_arg
                 elif byte_code in self.opc.LOCAL_OPS:
                     arg = f_code.co_varnames[int_arg]
+                    if isinstance(arg, UnicodeForPython3):
+                        arg = str(arg)
                 else:
                     arg = int_arg
                 arguments = [arg]
