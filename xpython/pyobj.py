@@ -42,11 +42,11 @@ def make_cell(value):
 # Python 3.x does this but it also shows junk at the end.
 Traceback = collections.namedtuple("_Traceback", "tb_frame tb_lasti tb_lineno tb_next")
 try:
-    _Traceback.tb_frame.__doc__ = "frame object at this level"
-    _Traceback.tb_lasti.__doc__ = "index of last attempted instruction in bytecode"
-    _Traceback.tb_lineno.__doc__ = "current line number in Python source code"
-    _Traceback.tb_next.__doc__ = "next inner traceback object (called by this level)"
-except:
+    Traceback.tb_frame.__doc__ = "frame object at this level"
+    Traceback.tb_lasti.__doc__ = "index of last attempted instruction in bytecode"
+    Traceback.tb_lineno.__doc__ = "current line number in Python source code"
+    Traceback.tb_next.__doc__ = "next inner traceback object (called by this level)"
+except Exception:
     pass
 
 
@@ -56,7 +56,7 @@ COMPREHENSION_FN_NAMES = frozenset(
 )
 
 
-class Function(object):
+class Function:
     """Function(name, code, globals, argdefs, closure, vm,  kwdefaults={},
                 annotations={}, doc=None, qualname=None)
 
@@ -102,8 +102,8 @@ class Function(object):
         code,
         globs,
         argdefs,
-        closure=None,
-        vm=None,
+        closure,
+        vm,
         kwdefaults={},
         annotations={},
         doc=None,
@@ -165,10 +165,14 @@ class Function(object):
             assert annotations == {}
             assert kwdefaults == {}
 
-        # In Python 3.x is varous generators and list comprehensions have a .0 arg
+        # In Python 3.x is various generators and list comprehensions have a .0 arg
         # but inspect doesn't show that. In the various MAKE_FUNCTION routines,
         # we will detect this and store True in this field when appropriate.
-        if not argdefs and self.__name__.split(".")[-1] in COMPREHENSION_FN_NAMES:
+        if (
+            not argdefs
+            and hasattr(self, "__name")
+            and self.__name__.split(".")[-1] in COMPREHENSION_FN_NAMES
+        ):
             self.has_dot_zero = True
         else:
             self.has_dot_zero = False
@@ -189,36 +193,43 @@ class Function(object):
         # alternatives, but overall more of this needs to be done.
         #
         # The intent in providing native functions is for use in type
-        # testing, mostly. The functios should not be run, since that defeats our
+        # testing, mostly. The functions should not be run, since that defeats our
         # ability to trace functions.
-        kw = {"argdefs": self.func_defaults}
+        if hasattr(self, "func_defaults"):
+            kw = {"argdefs": self.func_defaults}
+        else:
+            kw = {}
         if closure:
             kw["closure"] = tuple(make_cell(0) for _ in closure)
 
         if not isinstance(code, types.CodeType) and hasattr(code, "to_native"):
             try:
                 code = code.to_native()
-            except:
+            except Exception:
                 pass
 
         if isinstance(code, types.CodeType):
             try:
                 self._func = types.FunctionType(code, globs, **kw)
-                if vm.version >= 3.0:
+                if vm.version >= (3, 0):
                     # Above, types.FunctionType() above doesn't allow passing
                     # in the following attributes, so we set them as
                     # assignments below.
                     self._func.__kwdefaults__ = kwdefaults
                     self._func.__annotations__ = annotations
                     pass
-            except:
+            except Exception:
                 self._func = None
         else:
             # cross version interpreting... FIXME: fix this up
             self._func = None
 
     def __repr__(self):  # pragma: no cover
-        return "<Function %s at 0x%08x>" % (self.func_name, id(self))
+        if hasattr(self, "func_name"):
+            return "<Function %s at 0x%08x>" % (self.func_name, id(self))
+        elif hasattr (self, "_func"):
+            return str(self._func)
+        return "<Function at 0x%08x>" % (id(self))
 
     def __get__(self, instance, owner):
         if instance is not None:
@@ -394,6 +405,9 @@ class Frame(object):
         self.stack = []
         self.f_trace = None
 
+        # event args is used in tracing/debugging callback.
+        self.event_flags = None
+
         # brkpt is a mapping bytecode offset to the opcode value that was
         # smasshed by overwriting it with the pseudo opcode BRKPT.
         # After a breakpoint is serviced, this opcode needs to be run.
@@ -440,8 +454,8 @@ class Frame(object):
                     self.cells[var] = closure[i]
                 else:
                     # FIXME: this branch is probably wrong.
-                    # Also check all calls of Frame and make_frame() in vm to ensure we pass a function's
-                    # closure attribute.
+                    # Also check all calls of Frame and make_frame() in vm to ensure we
+                    # pass a function's closure attribute.
                     assert isinstance(f_back.cells[i], Cell), "f_back.cells[%d]: %r" % (
                         i,
                         f_back.cells[i],
@@ -454,7 +468,7 @@ class Frame(object):
         self.generator = None
         self.version = version
 
-        # These are sentinal or bogus values to start out.
+        # These are sentinel or bogus values to start out.
         # eval_frame will adjust inst_index.
         self.inst_index = -1
         self.fallthrough = False
@@ -567,7 +581,7 @@ class Generator(object):
 
 if __name__ == "__main__":
     frame = Frame(
-        traceback_from_frame.__code__, globals(), locals(), None, PYTHON_VERSION
+        traceback_from_frame.__code__, globals(), locals(), None, PYTHON_VERSION_TRIPLE
     )
     print(frame)
 

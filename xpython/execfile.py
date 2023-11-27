@@ -1,13 +1,12 @@
 """Execute files of Python code."""
 
+import mimetypes
 import os
 import os.path as osp
 import sys
 import tokenize
-import mimetypes
 from xdis.version_info import (
     IS_PYPY,
-    PYTHON_VERSION,
     PYTHON_VERSION_TRIPLE,
     version_tuple_to_str,
 )
@@ -27,7 +26,7 @@ import imp
 # This code is ripped off from coverage.py.  Define things it expects.
 try:
     open_source = tokenize.open  # pylint: disable=E1101
-except:
+except Exception:
 
     def open_source(fname):
         """Open a source file the best way."""
@@ -35,7 +34,7 @@ except:
 
 
 class CannotCompileError(Exception):
-    """For raising errors when we have a Compile eror."""
+    """For raising errors when we have a Compile error."""
 
     pass
 
@@ -314,7 +313,7 @@ def run_python_string(
         if not source or source[-1] != "\n":
             source += "\n"
         code = compile(source, fake_path, "exec")
-        python_version = PYTHON_VERSION
+        python_version = PYTHON_VERSION_TRIPLE
 
         # Execute the source string.
         exec_code_object(

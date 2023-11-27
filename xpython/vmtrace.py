@@ -2,21 +2,20 @@
 This can be used in a debugger or profiler.
 """
 
-import six
-from xdis import PYTHON_VERSION, IS_PYPY, codeType2Portable
+import logging
+
+from xdis import IS_PYPY, PYTHON_VERSION_TRIPLE, codeType2Portable
 
 # We will add a new "DEBUG" opcode
 from xdis.opcodes.base import def_op
 
-BREAKPOINT_OP = 8
-
-from xpython.vm import byteint, format_instruction, PyVM, PyVMError
-
-from xpython.pyobj import traceback_from_frame
-
-import logging
+from xpython.pyobj import Frame, traceback_from_frame
+from xpython.vm import PyVM, PyVMError, byteint, format_instruction
 
 log = logging.getLogger(__name__)
+
+
+BREAKPOINT_OP = 8
 
 PyVMEVENT_INSTRUCTION = 1  # tracing an instruction
 PyVMEVENT_LINE = (
@@ -78,7 +77,7 @@ class PyVMTraced(PyVM):
     def __init__(
         self,
         callback,
-        python_version=PYTHON_VERSION,
+        python_version=PYTHON_VERSION_TRIPLE,
         is_pypy=IS_PYPY,
         vmtest_testing=False,
         event_flags=PyVMEVENT_ALL,
@@ -93,17 +92,24 @@ class PyVMTraced(PyVM):
         self.event_flags = event_flags
         self.callback = callback
         # Add a new opcode to allow us high-speed breakpoints
+
+        # FIXME: older xdis uses  "self.opc.l" instead of "self.opc.loc"
+        if not hasattr(self.opc, "loc"):
+            if hasattr(self.opc, "l"):
+                self.opc.loc = self.opc.l
         def_op(self.opc.loc, "BRKPT", BREAKPOINT_OP, 0, 0)
 
     def add_breakpoint(self, frame, offset):
-        """Adds a breakpoint at `offset` of `frame`. This is done by modifying the bytecode opcode
-        at the given offset by replacing it with a pseudo-op BRKPT instruction. The old opcode is
-        squirreled a way though.
         """
-        # FIXME: to be more useful we need to work on a code object, and modified code objects
-        # then get replaced when creating frames.
+        Adds a breakpoint at `offset` of `frame`. This is done by modifying the
+        bytecode opcode at the given offset by replacing it with a pseudo-op BRKPT
+        instruction. The old opcode is squirreled a way though.
+        """
+        # FIXME: to be more useful we need to work on a code object, and modified code
+        # objects  then get replaced when creating frames.
         # Convert code to something we can change, then
-        # Convert its bytecode bytes to a list, update the list and replace this back in the code.
+        # Convert its bytecode bytes to a list, update the list and replace this back in
+        # the code.
         code = codeType2Portable(frame.f_code, self.version)
         frame.brkpt[offset] = code.co_code[offset]
         bytecode = list(code.co_code)
@@ -112,11 +118,13 @@ class PyVMTraced(PyVM):
         frame.f_code = code
 
     def remove_breakpoint(self, frame, offset):
-        """removes a breakpoint at `offset` of `frame`. This is done by restoring the opcode that
-        was previously smashed using `add_breakpoint()`
+        """
+        Removes a breakpoint at `offset` of `frame`. This is done by restoring the
+        opcode that was previously smashed using `add_breakpoint()`
         """
         # Convert code to something we can change, then
-        # Convert its bytecode ytes to a list, update the list and replace this back in the code.
+        # Convert its bytecode ytes to a list, update the list and replace this back in
+        # the code.
         code = frame.f_code
         bytecode = list(code.co_code)
         bytecode[offset] = frame.brkpt[offset]

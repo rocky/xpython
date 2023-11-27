@@ -19,7 +19,9 @@ from xdis import (
     op_has_argument,
     next_offset,
 )
+from xdis.cross_types import UnicodeForPython3
 from xdis.op_imports import get_opcode_module
+from xdis.opcodes.opcode_311 import _nb_ops
 
 from xpython.pyobj import Frame, Block, Traceback, traceback_from_frame
 from xpython.byteop import get_byteop
@@ -28,7 +30,8 @@ PY2 = not PYTHON3
 log = logging.getLogger(__name__)
 
 if PYTHON3:
-    byteint = lambda b: b
+    def byteint(b):
+        return b
 else:
     byteint = ord
 
@@ -99,7 +102,7 @@ def format_instruction(
     vm=None,
 ):
     """Formats an instruction. What's a little different here is that in
-    contast to Python's `dis`, or a colorized version of that, used in
+    contrast to Python's `dis`, or a colorized version of that, used in
     `trepan3k` we may have access to the frame eval stack and therefore
     can show operands in a nicer way.
 
@@ -201,7 +204,7 @@ class PyVM(object):
             raise PyVMError("Peek value must be greater than 0")
         try:
             return self.frame.stack[-n]
-        except:
+        except Exception:
             return 0
 
     def pop(self, i=0):
@@ -229,6 +232,10 @@ class PyVM(object):
     def push(self, *vals):
         """Push values onto the value stack."""
         self.frame.stack.extend(vals)
+
+    def set(self, i, value):
+        """Set a value at stack position i."""
+        self.frame.stack[-i] = value
 
     def top(self):
         """Return the value at the top of the stack, with no changes."""
@@ -261,6 +268,14 @@ class PyVM(object):
         # added a debugger for x-python that relies on
         # self.frame.f_last_i being correct.
         self.frame.f_lasti = jump
+        self.frame.fallthrough = False
+
+    def jump_relative(self, delta):
+        """Adjust the bytecode pointer by `deleta`, so it will execute next,
+        However we subtract one from the offset, because fetching the
+        next instruction adds one before fetching.
+        """
+        self.frame.f_lasti += delta
         self.frame.fallthrough = False
 
     def make_frame(
@@ -463,6 +478,8 @@ class PyVM(object):
 
                 if byte_code in self.opc.CONST_OPS:
                     arg = f_code.co_consts[int_arg]
+                    if isinstance(arg, UnicodeForPython3):
+                        arg = str(arg)
                 elif byte_code in self.opc.FREE_OPS:
                     if int_arg < len(f_code.co_cellvars):
                         arg = f_code.co_cellvars[int_arg]
@@ -471,6 +488,8 @@ class PyVM(object):
                         arg = f_code.co_freevars[var_idx]
                 elif byte_code in self.opc.NAME_OPS:
                     arg = f_code.co_names[int_arg]
+                    if isinstance(arg, UnicodeForPython3):
+                        arg = str(arg)
                 elif byte_code in self.opc.JREL_OPS:
                     # Many relative jumps are conditional,
                     # so setting f.fallthrough is wrong.
@@ -486,6 +505,8 @@ class PyVM(object):
                     arg = int_arg
                 elif byte_code in self.opc.LOCAL_OPS:
                     arg = f_code.co_varnames[int_arg]
+                    if isinstance(arg, UnicodeForPython3):
+                        arg = str(arg)
                 else:
                     arg = int_arg
                 arguments = [arg]
@@ -525,7 +546,11 @@ class PyVM(object):
             if bytecode_name.startswith("UNARY_"):
                 byteop.unaryOperator(bytecode_name[6:])
             elif bytecode_name.startswith("BINARY_"):
-                byteop.binaryOperator(bytecode_name[7:])
+                if self.version < (3, 11):
+                    byteop.binaryOperator(bytecode_name[7:])
+                else:
+                    byteop.binaryOperator(_nb_ops[int_arg][0][3:])
+
             elif bytecode_name.startswith("INPLACE_"):
                 byteop.inplaceOperator(bytecode_name[8:])
             elif "SLICE+" in bytecode_name:
@@ -555,7 +580,7 @@ class PyVM(object):
                     )
                 why = bytecode_fn(*arguments)
 
-        except:
+        except Exception:
             # Deal with exceptions encountered while executing the op.
             self.last_exception = sys.exc_info()
 
@@ -755,7 +780,7 @@ class PyVM(object):
         self.in_exception_processing = False
         return self.return_value
 
-    ## Operators
+    # Operators
 
     def sliceOperator(self, op):
         start = 0
@@ -768,15 +793,15 @@ class PyVM(object):
         elif count == 3:
             end = self.pop()
             start = self.pop()
-        l = self.pop()
+        slice_len = self.pop()
         if end is None:
-            end = len(l)
+            end = len(slice_len)
         if op.startswith("STORE_"):
-            l[start:end] = self.pop()
+            slice_len[start:end] = self.pop()
         elif op.startswith("DELETE_"):
-            del l[start:end]
+            del slice_len[start:end]
         else:
-            self.push(l[start:end])
+            self.push(slice_len[start:end])
 
 
 if __name__ == "__main__":
