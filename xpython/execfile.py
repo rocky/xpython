@@ -17,13 +17,11 @@ from xpython.stdlib.builtins import make_compatible_builtins
 from xpython.vmtrace import PyVMTraced
 from xpython.version_info import SUPPORTED_PYTHON, SUPPORTED_BYTECODE, SUPPORTED_PYPY
 
-if PYTHON_VERSION_TRIPLE >= (3, 4):
-    from importlib.util import find_spec as find_module
-    from types import ModuleType as new_module
-else:
-    from imp import find_module, new_module
+# To silence the "import imp" DeprecationWarning below
+import warnings
 
 warnings.filterwarnings("ignore")
+import imp
 
 # This code is ripped off from coverage.py.  Define things it expects.
 try:
@@ -144,7 +142,7 @@ def run_python_module(modulename, args):
             else:
                 packagename, name = None, modulename
                 searchpath = None  # "top-level search" in imp.find_module()
-            openfile, pathname, _ = find_module(name, searchpath)
+            openfile, pathname, _ = imp.find_module(name, searchpath)
 
             # Complain if this is a magic non-file module.
             if openfile is None and pathname is None:
@@ -157,7 +155,7 @@ def run_python_module(modulename, args):
                 name = "__main__"
                 package = __import__(packagename, glo, loc, ["__path__"])
                 searchpath = package.__path__
-                openfile, pathname, _ = find_module(name, searchpath)
+                openfile, pathname, _ = imp.find_module(name, searchpath)
         except ImportError:
             _, err, _ = sys.exc_info()
             raise NoSourceError(str(err))
@@ -186,7 +184,7 @@ def run_python_file(
     """
     # Create a module to serve as __main__
     old_main_mod = sys.modules["__main__"]
-    main_mod = new_module("__main__")
+    main_mod = imp.new_module("__main__")
     sys.modules["__main__"] = main_mod
     main_mod.__file__ = filename
     if package:
@@ -291,7 +289,7 @@ def run_python_string(
     """Run a python string as if it were the main program on the command line."""
     # Create a module to serve as __main__
     old_main_mod = sys.modules["__main__"]
-    main_mod = new_module("__main__")
+    main_mod = imp.new_module("__main__")
     sys.modules["__main__"] = main_mod
     fake_path = main_mod.__file__ = "<string %s>" % source[:20]
     if package:
