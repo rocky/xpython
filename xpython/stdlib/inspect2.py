@@ -5,7 +5,7 @@
 
 import sys
 from collections import namedtuple
-from inspect import ismethod
+from inspect import ismethod, isfunction
 
 # For the kinds of specific opcode use we need,
 # all 2.x opcodes are compatible with what is in 2.7
@@ -16,12 +16,15 @@ ArgSpec = namedtuple("ArgSpec", "args varargs keywords defaults")
 
 
 def isFunction(obj):
-    return (
-        hasattr(obj, "__name__")
-        and type(obj).__name__ == "Function"
-        and hasattr(obj, "__module__")
-        and type(obj).__module__ == "xpython.pyobj"
-    )
+    if hasattr(obj, "__name__"):
+        return (
+            type(obj).__name__ == "Function"
+            and hasattr(obj, "__module__")
+            and type(obj).__module__ == "xpython.pyobj"
+        )
+    else:
+        # Python 2.7 is like this
+        return hasattr(obj, "_func") and isfunction(obj._func)
 
 
 # ------------------------------------------------ argument list extraction
@@ -109,7 +112,13 @@ def getargspec(func):
         func = func.im_func
     if not isFunction(func):
         raise TypeError("{!r} is not a Python function".format(func))
-    args, varargs, varkw = getargs(func.func_code, func.version)
+
+    func_version = func.version
+    if not hasattr(func, "__name__"):
+        # Python 2.7 is like this
+        func = func._func
+
+    args, varargs, varkw = getargs(func.func_code, func_version)
     return ArgSpec(args, varargs, varkw, func.func_defaults)
 
 
@@ -123,7 +132,10 @@ def getcallargs(func, *positional, **named):
     names of the * and ** arguments, if any), and values the respective bound
     values from 'positional' and 'named'."""
     args, varargs, varkw, defaults = getargspec(func)
-    f_name = func.__name__
+    if hasattr(func, "__name__"):
+        f_name = func.__name__
+    else:
+        f_name = str(func)
     arg2value = {}
 
     # The following closures are basically because of tuple parameter unpacking.

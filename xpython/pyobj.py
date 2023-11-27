@@ -269,15 +269,21 @@ class Function:
             else:
                 callargs = inspect2.getcallargs(self, *args, **kwargs)
 
+        if hasattr(self, "func_code"):
+            func = self
+        else:
+            # Python 2.7 is like this
+            func = self._func
+
         frame = self._vm.make_frame(
-            self.func_code, callargs, self.func_globals, {}, self.__closure__
+            func.func_code, callargs, func.func_globals, {}, func.__closure__
         )
-        if self.__code__.co_flags & CO_GENERATOR:
+        if func.__code__.co_flags & CO_GENERATOR:
             qualname = self.__qualname__ if self._vm.version >= (3, 4) else None
             gen = Generator(
                 g_frame=frame, name=self.__name__, qualname=qualname, vm=self._vm
             )
-            if self.__code__.co_flags & CO_ITERABLE_COROUTINE:
+            if func.__code__.co_flags & CO_ITERABLE_COROUTINE:
                 gen = _AsyncGeneratorWrapper(gen)
                 frame.generator = gen
                 return gen
