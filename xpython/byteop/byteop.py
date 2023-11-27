@@ -176,7 +176,7 @@ class ByteOpBase(object):
                 return
             elif func == locals:
                 # Use the frame's locals(), not the interpreter's
-                self.vm.push(frame.f_globals)
+                self.vm.push(frame.f_locals)
                 return
             elif func == compile:
                 # Set dont_inherit parameter.
