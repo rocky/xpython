@@ -4,19 +4,17 @@
 Note: this is subclassed. Later versions use operations from here.
 """
 
+import logging
+import operator
+import sys
 from collections import namedtuple
 
-Version_info = namedtuple("version_info", "major minor micro releaselevel serial")
+import six
+from xdis.version_info import PYTHON_VERSION_TRIPLE
 
 # FIXME: we should use:
 # from copy import deepcopy
 
-import logging
-import operator
-import sys
-
-import six
-from xdis.version_info import PYTHON_VERSION_TRIPLE
 
 if PYTHON_VERSION_TRIPLE >= (3, 0):
     import importlib
@@ -25,14 +23,12 @@ if PYTHON_VERSION_TRIPLE >= (3, 0):
 else:
     import_fn = __import__
 
-from xpython.byteop.byteop import (
-    ByteOpBase,
-    fmt_binary_op,
-    fmt_ternary_op,
-    fmt_unary_op,
-)
+from xpython.byteop.byteop import (ByteOpBase, fmt_binary_op, fmt_ternary_op,
+                                   fmt_unary_op)
 from xpython.pyobj import Cell, Function, traceback_from_frame
 from xpython.vmtrace import PyVMEVENT_RETURN, PyVMEVENT_YIELD
+
+Version_info = namedtuple("version_info", "major minor micro releaselevel serial")
 
 log = logging.getLogger(__name__)
 
@@ -127,7 +123,7 @@ class ByteOp24(ByteOpBase):
         return " (%s)" % vm.peek(1)
 
     def BRKPT(self):
-        """Psuedo opcode: breakpoint. We added this. TODO: call callback, then run
+        """Pseudo opcode: breakpoint. We added this. TODO: call callback, then run
         instruction that should have gotten run.
         """
         vm = self.vm
@@ -194,12 +190,14 @@ class ByteOp24(ByteOpBase):
         self.vm.push(b, a)
 
     def ROT_THREE(self):
-        "Lifts second and third stack item one position up, moves top down to position three."
+        """Lifts second and third stack item one position up, moves
+        top down to position three."""
         a, b, c = self.vm.popn(3)
         self.vm.push(c, a, b)
 
     def ROT_FOUR(self):
-        "Lifts second, third and forth stack item one position up, moves top down to position four."
+        """Lifts second, third and forth stack item one position up,
+        moves top down to position four."""
         a, b, c, d = self.vm.popn(4)
         self.vm.push(d, a, b, c)
 
@@ -374,7 +372,7 @@ class ByteOp24(ByteOpBase):
         # Note: type() wants to only create new-style classes, while
         # bases might include only old-style classes. This will
         # trigger this error: TypeError: a new-style class can't have
-        # only classic bases So what we'll do is thow in "object" so
+        # only classic bases So what we'll do is throw in "object" so
         # there is at least one new-style class.
         try:
             klass = type(name, bases, methods)
@@ -393,7 +391,8 @@ class ByteOp24(ByteOpBase):
         del self.vm.frame.f_globals[name]
 
     def DELETE_NAME(self, name):
-        """Implements del name, where name is the index into co_names attribute of the code object."""
+        """Implements del name, where name is the index into co_names
+        attribute of the code object."""
         del self.vm.frame.f_locals[name]
 
     def UNPACK_SEQUENCE(self, count):
@@ -445,7 +444,9 @@ class ByteOp24(ByteOpBase):
         # except NameError:
         #     self.vm.last_traceback = traceback_from_frame(self.vm.frame)
         #     tb  = traceback_from_frame(self.vm.frame)
-        #     self.vm.last_exception = (NameError, NameError("name '%s' is not defined" % name), tb)
+        #     self.vm.last_exception = (NameError,
+        #                               NameError("name '%s' is not defined" % name),
+        #                               tb)
         #     return "exception"
         # else:
         #     self.vm.push(self.lookup_name(name))
@@ -473,8 +474,8 @@ class ByteOp24(ByteOpBase):
         Pushes a new dictionary object onto the stack. The dictionary is
         pre-sized to hold count entries.
         """
-        # "size" is ignored; In contrast to C, in Python, the default dictionary type has no
-        # notion of allocation size.
+        # "size" is ignored; In contrast to C, in Python, the default
+        # dictionary type has no notion of allocation size.
         self.vm.push({})
 
     # end BUILD_ operators
@@ -506,7 +507,8 @@ class ByteOp24(ByteOpBase):
     ]
 
     def COMPARE_OP(self, opname):
-        """Performs a Boolean operation. The operation name can be found in cmp_op[opname]."""
+        """Performs a Boolean operation. The operation name can be
+        found in cmp_op[opname]."""
         x, y = self.vm.popn(2)
         self.vm.push(self.COMPARE_OPERATORS[opname](x, y))
 
@@ -566,7 +568,7 @@ class ByteOp24(ByteOpBase):
 
         self.vm.push(getattr(mod, name))
 
-    ## Jumps
+    # Jumps
 
     def JUMP_FORWARD(self, jump_offset):
         """Increments bytecode counter by jump.
@@ -666,14 +668,14 @@ class ByteOp24(ByteOpBase):
         self.vm.push_block("finally", jump_offset)
 
     def STORE_MAP(self):
-        """
-        Store a key and value pair in a dictionary. Pops the key and value while leaving the dictionary on the stack.
+        """Store a key and value pair in a dictionary. Pops the key
+        and value while leaving the dictionary on the stack.
         """
         the_map, val, key = self.vm.popn(3)
         the_map[key] = val
         self.vm.push(the_map)
 
-    ## some (but not all) Names
+    # some (but not all) Names
 
     def LOAD_FAST(self, name):
         """
@@ -696,10 +698,10 @@ class ByteOp24(ByteOpBase):
         del self.vm.frame.f_locals[var_num]
 
     def LOAD_CLOSURE(self, i):
-        """
-        Pushes a reference to the cell contained in slot i of the cell and
-        free variable storage. The name of the variable is co_cellvars[i] if i is less
-        than the length of co_cellvars. Otherwise it is co_freevars[i -len(co_cellvars)].
+        """Pushes a reference to the cell contained in slot i of the
+        cell and free variable storage. The name of the variable is
+        co_cellvars[i] if i is less than the length of
+        co_cellvars. Otherwise it is co_freevars[i -len(co_cellvars)].
         """
         self.vm.push(self.vm.frame.cells[i])
 
@@ -712,8 +714,8 @@ class ByteOp24(ByteOpBase):
         self.vm.push(self.vm.frame.cells[name].get())
 
     def STORE_DEREF(self, name):
-        """
-        Stores TOS into the cell contained in slot i of the cell and free variable storage.
+        """Stores TOS into the cell contained in slot i of the cell
+        and free variable storage.
         """
         self.vm.frame.cells[name].set(self.vm.pop())
 

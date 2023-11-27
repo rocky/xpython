@@ -41,7 +41,9 @@ class ByteOp38(ByteOp37):
     ##############################################################################
 
     def BEGIN_FINALLY(self):
-        """Pushes NULL onto the stack for using it in END_FINALLY, POP_FINALLY, WITH_CLEANUP_START and WITH_CLEANUP_FINISH. Starts the finally block."""
+        """Pushes NULL onto the stack for using it in END_FINALLY,
+        POP_FINALLY, WITH_CLEANUP_START and
+        WITH_CLEANUP_FINISH. Starts the finally block."""
         self.vm.push(None)
 
     def END_ASYNC_FOR(self):
@@ -61,8 +63,8 @@ class ByteOp38(ByteOp37):
         * If TOS is NULL (pushed by BEGIN_FINALLY) continue from the next instruction.
           TOS is popped.
 
-        * If TOS is an integer (pushed by CALL_FINALLY), sets the bytecode counter to TOS.
-          TOS is popped.
+        * If TOS is an integer (pushed by CALL_FINALLY), sets the bytecode counter to
+          TOS. TOS is popped.
 
         * If TOS is an exception type (pushed when an exception has
           been raised) 6 values are popped from the stack, the first
@@ -100,15 +102,17 @@ class ByteOp38(ByteOp37):
         self.vm.push(self.vm.frame.f_lasti)
         self.vm.jump(delta)
 
-    def POP_FINALLY(self, preserve_tos):
+    def POP_FINALLY(self, preserve_tos: int):
         """Cleans up the value stack and the block stack. If preserve_tos is
         not 0 TOS first is popped from the stack and pushed on the stack after
         performing other stack operations:
 
-        * If TOS is NULL or an integer (pushed by BEGIN_FINALLY or CALL_FINALLY) it is popped from the stack.
-        * If TOS is an exception type (pushed when an exception has been raised) 6 values are popped from the
-          stack, the last three popped values are used to restore the exception state. An exception handler
-          block is removed from the block stack.
+        * If TOS is NULL or an integer (pushed by BEGIN_FINALLY or CALL_FINALLY) it is
+          popped from the stack.
+        * If TOS is an exception type (pushed when an exception has been raised) 6
+          values are popped from the
+          stack, the last three popped values are used to restore the exception state.
+          An exception handler block is removed from the block stack.
 
         It is similar to END_FINALLY, but doesn’t change the bytecode
         counter nor raise an exception. Used for implementing break,
@@ -132,7 +136,8 @@ class ByteOp38(ByteOp37):
             raise self.vm.PyVMError("Confused POP_FINALLY")
         return why
 
-    # Changed from 2.4: Map value is TOS and map key is TOS1. Before, those were reversed.
+    # Changed from 2.4: Map value is TOS and map key is TOS1. Before,
+    # those were reversed.
     def MAP_ADD(self, count):
         """Calls dict.setitem(TOS1[-count], TOS1, TOS). Used to implement dict
         comprehensions.

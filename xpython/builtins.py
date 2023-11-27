@@ -120,10 +120,11 @@ def builtin_super(self, typ=None, obj = None):
     elif hasattr(cells, "__classcell__"):
         cell = cells["__classcell__"]
 
-    start_class=cell.get()
+    start_class = cell.get()
     return WrappedSuperClass(start_class, typ, obj)
 
     return None
+
 
 class WrappedSuperClass(object):
     """
@@ -132,7 +133,6 @@ class WrappedSuperClass(object):
     See https://docs.python.org/3.7/library/functions.html#super
     """
     def __init__(self, start_class, typ, obj):
-
         if obj is not None:
             assert isinstance(obj, typ)
 
@@ -146,9 +146,8 @@ class WrappedSuperClass(object):
         self.object = obj
         self.type = typ
 
-
     def __repr__(self):
-        if not self.type_given is None and self.object is None:
+        if self.type_given is not None and self.object is None:
             obj_str = "NULL"
         elif self.object is not None:
             obj_str = "<%s object>" % self.object.__class__.__name_
@@ -158,6 +157,7 @@ class WrappedSuperClass(object):
 
     def init(self, *args, **kwargs):
         return self.__orig_init__(self, *args, **kwargs)
+
 
 # From Pypy 3.6
 # def find_metaclass(bases, namespace, globals, builtin):

@@ -231,7 +231,7 @@ version being interpreted and the version of Python that is
 running. There is tighter control of opcodes and an opcode's
 implementation is kept for each Python version. So we'll warn early
 when something is invalid. You can run bytecode back to Python 2.4
-using Python 3.10 (largely), which is amazing give that 3.10's native
+using Python 3.10 (largely), which is amazing given that 3.10's native
 byte code is 2 bytes per instruction while 2.4's is 1 or 3 bytes per
 instruction.
 

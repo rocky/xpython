@@ -5,12 +5,14 @@ Note: this is subclassed. Later versions use operations from here.
 """
 
 import inspect
-import operator
 import logging
+import operator
 import sys
 from xdis.version_info import PYTHON_VERSION_TRIPLE, version_tuple_to_str
-from xpython.pyobj import Function
+
 from xpython.builtins import build_class, builtin_super
+from xpython.pyobj import Function
+
 
 # FIXME: in the future we can get this from xdis
 def parse_fn_counts_30_35(argc: int) -> tuple:
@@ -18,7 +20,7 @@ def parse_fn_counts_30_35(argc: int) -> tuple:
     In Python 3.3 to 3.5 MAKE_CLOSURE and MAKE_FUNCTION encode
     arguments counts of positional, default + named, and annotation
     arguments a particular kind of encoding where each of
-    the entry a a packe byted value of the lower 24 bits
+    the entry a a packed byted value of the lower 24 bits
     of ``argc``.  The high bits of argc may have come from
     an EXTENDED_ARG instruction. Here, we unpack the values
     from the ``argc`` int and return a triple of the
@@ -106,7 +108,7 @@ def fmt_unary_op(vm, arg=None, repr=repr):
     # We need to check the length because sometimes in a return event
     # (as opposed to a
     # a RETURN_VALUE callback can* the value has been popped, and if the
-    # return valuse was the only one on the stack, it will be empty here.
+    # return values was the only one on the stack, it will be empty here.
     if len(vm.frame.stack):
         return " (%s)" % (repr(vm.top()),)
     else:
@@ -172,11 +174,12 @@ class ByteOpBase(object):
                 return
             elif func == locals:
                 # Use the frame's locals(), not the interpreter's
-                self.vm.push(frame.f_globals)
+                self.vm.push(frame.f_locals)
                 return
             elif func == compile:
-                # Set dont_inherit parameter.
-                # FIXME: we should set other flags too based on the interpreted environment?
+                # Set dont_inherit parameter.  FIXME: we should set
+                # other flags too based on the interpreted
+                # environment?
                 if len(pos_args) < 5 and "dont_inherit" not in named_args:
                     named_args["dont_inherit"] = True
                     pass
@@ -191,7 +194,6 @@ class ByteOpBase(object):
             # and more reliable:
             #   func == exec
             elif func.__name__ == "exec":
-
                 if not 1 <= len(pos_args) <= 3:
                     raise self.vm.PyVMError(
                         "exec() builtin should have 1..3 positional arguments; got %d"
@@ -222,7 +224,8 @@ class ByteOpBase(object):
                 else:
                     if not self.cross_bytecode_exec_warning_shown:
                         log.warning(
-                            "Running built-in `exec()` because we are cross-version interpreting version %s from version %s."
+                            "Running built-in `exec()` because we are cross-version "
+                            "interpreting version %s from version %s."
                             % (
                                 version_tuple_to_str(self.version_info, end=2),
                                 version_tuple_to_str(PYTHON_VERSION_TRIPLE, end=2),
@@ -231,7 +234,6 @@ class ByteOpBase(object):
                         self.cross_bytecode_exec_warning_shown = True
 
             elif func == eval:
-
                 if not 1 <= len(pos_args) <= 3:
                     raise self.vm.PyVMError(
                         "eval() builtin should have 1..3 positional arguments; got %d"
@@ -261,7 +263,8 @@ class ByteOpBase(object):
                 else:
                     if not self.cross_bytecode_eval_warning_shown:
                         log.warning(
-                            "Running built-in `eval()` because we are cross-version interpreting version %s from version %s."
+                            "Running built-in `eval()` because we are cross-version "
+                            "interpreting version %s from version %s."
                             % (
                                 version_tuple_to_str(self.version_info, end=2),
                                 version_tuple_to_str(PYTHON_VERSION_TRIPLE, end=2),
@@ -272,22 +275,25 @@ class ByteOpBase(object):
             elif PYTHON_VERSION_TRIPLE >= (3, 0) and func == __build_class__:
                 assert (
                     len(pos_args) > 0
-                ), "__build_class__() should have at least one argument, an __init__() function."
+                ), ("__build_class__() should have at least one argument, an "
+                    "__init__() function.")
                 init_fn = pos_args[0]
                 if (
                     isinstance(init_fn, Function)
                     or self.is_pypy
                     or self.version_info[:2] != PYTHON_VERSION_TRIPLE[:2]
                 ) and PYTHON_VERSION_TRIPLE >= (3, 3):
-                    # 3.3+ __build_class__() works only on bytecode that matches the CPython interpeter,
-                    # so use Darius' version instead.
-                    # Down the line we will try to do this universally, but it is tricky:
+                    # 3.3+ __build_class__() works only on bytecode
+                    # that matches the CPython interpreter, so use
+                    # Darius' version instead.  Down the line we will
+                    # try to do this universally, but it is tricky:
                     retval = build_class(self.vm.opc, *pos_args, **named_args)
                     self.vm.push(retval)
                     return
                 else:
-                    # Use builtin __build_class__(). However for that, we need a native function.
-                    # This is wrong though in that we won't trace into __init__().
+                    # Use builtin __build_class__(). However for that,
+                    # we need a native function.  This is wrong though
+                    # in that we won't trace into __init__().
                     init_fn = pos_args[0]
                     if isinstance(init_fn, Function) and init_fn in self.vm.fn2native:
                         pos_args[0] = self.vm.fn2native[init_fn]
@@ -322,9 +328,7 @@ class ByteOpBase(object):
             and self.version_info[:2] == PYTHON_VERSION_TRIPLE[:2]
         ):
             log.debug("calling native function %s" % func.__name__)
-        elif (
-            inspect.isclass(func)
-        ):
+        elif inspect.isclass(func):
             if func.__name__ == "super":
                 pos_args = [self.vm.frame] + pos_args
                 func = builtin_super
@@ -404,7 +408,7 @@ class ByteOpBase(object):
             else:
                 return "reraise"
 
-        elif type(exc) == type:
+        elif type(exc) is type:
             # As in `raise ValueError`
             exc_type = exc
             val = exc()  # Make an instance.
@@ -419,7 +423,7 @@ class ByteOpBase(object):
         # val is a valid exception instance and exc_type is its class.
         # Now do a similar thing for the cause, if present.
         if cause:
-            if type(cause) == type:
+            if type(cause) is type:
                 cause = cause()
             elif not isinstance(cause, BaseException):
                 return "exception"  # error
