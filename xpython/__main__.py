@@ -1,13 +1,14 @@
 """A main program for xpython."""
 
-import click
 import logging
 import sys
 
-from xpython import execfile
-from xpython.vm import PyVMRuntimeError
-from xpython.version import __version__
+import click
 from xdis.version_info import IS_PYPY, version_tuple_to_str
+
+from xpython import execfile
+from xpython.version import __version__
+from xpython.vm import PyVMRuntimeError
 
 
 def version_message():

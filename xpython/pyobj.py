@@ -5,6 +5,7 @@ import linecache
 import types
 from copy import copy
 from sys import stderr
+
 from xdis import CO_GENERATOR, CO_ITERABLE_COROUTINE, iscode
 from xdis.version_info import PYTHON3, PYTHON_VERSION_TRIPLE
 
@@ -16,10 +17,10 @@ else:
         pass
 
 
-import xpython.stdlib.inspect3 as inspect3
-import xpython.stdlib.inspect2 as inspect2
-
 import six
+
+import xpython.stdlib.inspect2 as inspect2
+import xpython.stdlib.inspect3 as inspect3
 
 PY2 = not PYTHON3
 
@@ -226,7 +227,7 @@ class Function:
     def __repr__(self):  # pragma: no cover
         if hasattr(self, "func_name"):
             return "<Function %s at 0x%08x>" % (self.func_name, id(self))
-        elif hasattr (self, "_func"):
+        elif hasattr(self, "_func"):
             return str(self._func)
         return "<Function at 0x%08x>" % (id(self))
 
@@ -580,8 +581,7 @@ class Generator(object):
 
 if __name__ == "__main__":
     frame = Frame(
-        traceback_from_frame.__code__, globals(), locals(), None,
-        PYTHON_VERSION_TRIPLE
+        traceback_from_frame.__code__, globals(), locals(), None, PYTHON_VERSION_TRIPLE
     )
     print(frame)
 

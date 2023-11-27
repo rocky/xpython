@@ -23,8 +23,12 @@ if PYTHON_VERSION_TRIPLE >= (3, 0):
 else:
     import_fn = __import__
 
-from xpython.byteop.byteop import (ByteOpBase, fmt_binary_op, fmt_ternary_op,
-                                   fmt_unary_op)
+from xpython.byteop.byteop import (
+    ByteOpBase,
+    fmt_binary_op,
+    fmt_ternary_op,
+    fmt_unary_op,
+)
 from xpython.pyobj import Cell, Function, traceback_from_frame
 from xpython.vmtrace import PyVMEVENT_RETURN, PyVMEVENT_YIELD
 

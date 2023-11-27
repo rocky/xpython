@@ -5,7 +5,6 @@ This can be used in a debugger or profiler.
 import logging
 
 from xdis import IS_PYPY, PYTHON_VERSION_TRIPLE, codeType2Portable
-
 # We will add a new "DEBUG" opcode
 from xdis.opcodes.base import def_op
 

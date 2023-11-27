@@ -275,10 +275,10 @@ class ByteOpBase(object):
                         self.cross_bytecode_eval_warning_shown = True
 
             elif PYTHON_VERSION_TRIPLE >= (3, 0) and func == __build_class__:
-                assert (
-                    len(pos_args) > 0
-                ), ("__build_class__() should have at least one argument, an "
-                    "__init__() function.")
+                assert len(pos_args) > 0, (
+                    "__build_class__() should have at least one argument, an "
+                    "__init__() function."
+                )
                 init_fn = pos_args[0]
                 if (
                     isinstance(init_fn, Function)

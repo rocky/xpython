@@ -10,6 +10,7 @@ if PYTHON_VERSION_TRIPLE >= (3, 0):
     import importlib
     from builtins import input
     from functools import reduce
+
     if PYTHON_VERSION_TRIPLE >= (3, 4):
         from importlib import reload
     else:
