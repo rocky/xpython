@@ -11,11 +11,9 @@ import inspect
 from xdis.version_info import PYTHON_VERSION_TRIPLE
 
 from xpython.byteop.byteop24 import Version_info
-from xpython.byteop.byteop36 import (
-    COMPREHENSION_FN_NAMES,
-    MAKE_FUNCTION_SLOT_NAMES,
-    MAKE_FUNCTION_SLOTS,
-)
+from xpython.byteop.byteop36 import (COMPREHENSION_FN_NAMES,
+                                     MAKE_FUNCTION_SLOT_NAMES,
+                                     MAKE_FUNCTION_SLOTS)
 from xpython.byteop.byteop39 import ByteOp39
 from xpython.pyobj import Function
 
@@ -165,8 +163,8 @@ class ByteOp310(ByteOp39):
         assert kind in (0, 1, None)
 
     def ROT_N(self, count: int):
-        """
-        Lift the top count stack items one position up, and move TOS down to position count.
+        """Lift the top count stack items one position up, and move
+        TOS down to position count.
         """
         # FIXME
         raise self.vm.PyVMError("ROT_N not implemented")

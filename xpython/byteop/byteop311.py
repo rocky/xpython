@@ -8,9 +8,11 @@
 """
 
 from typing import Any
+
 from xpython.byteop.byteop24 import Version_info
 from xpython.byteop.byteop310 import ByteOp310
 from xpython.pyobj import traceback_from_frame
+
 
 class ByteOp311(ByteOp310):
     def __init__(self, vm):
@@ -26,18 +28,19 @@ class ByteOp311(ByteOp310):
 
         func = self.vm.pop()
         return self.call_function_with_args_resolved(func, pos_args, named_args)
+
     # Changed in 3.11...
 
-    # New in 3.11.
-    # Note: below, when the parameter is "delta", the value has been adjusted from a relative number
-    # into and absolute one.
+    # New in 3.11.  Note: below, when the parameter is "delta", the
+    # value has been adjusted from a relative number into and absolute
+    # one.
     def CACHE(self):
         """
-          Rather than being an actual instruction, this opcode is
-          used to mark extra space for the interpreter to cache useful
-          data directly in the bytecode itself. It is automatically
-          hidden by all dis utilities, but can be viewed with
-          show_caches=True.
+        Rather than being an actual instruction, this opcode is
+        used to mark extra space for the interpreter to cache useful
+        data directly in the bytecode itself. It is automatically
+        hidden by all dis utilities, but can be viewed with
+        show_caches=True.
         """
         return
 
@@ -107,38 +110,38 @@ class ByteOp311(ByteOp310):
 
     def PRECALL(self, argc: int):
         """
-        `meth` is NULL when LOAD_METHOD thinks that it's not
-        a method call.
+         `meth` is NULL when LOAD_METHOD thinks that it's not
+         a method call.
 
-        Stack layout:
+         Stack layout:
 
-               ... | NULL | callable | arg1 | ... | argN
-                                                    ^- TOP()
-                                       ^- (-oparg)
-                            ^- (-oparg-1)
-                     ^- (-oparg-2)
+                ... | NULL | callable | arg1 | ... | argN
+                                                     ^- TOP()
+                                        ^- (-oparg)
+                             ^- (-oparg-1)
+                      ^- (-oparg-2)
 
-       `callable` will be POPed by call_function.
-        NULL will will be POPed manually later.
-        If `meth` isn't NULL, it's a method call.  Stack layout:
+        `callable` will be popped by ``call_function``.
+         NULL will will be popped manually later.
+         If `meth` isn't NULL, it's a method call.  Stack layout:
 
-             ... | method | self | arg1 | ... | argN
-                                                ^- TOP()
-                                   ^- (-oparg)
-                            ^- (-oparg-1)
-                   ^- (-oparg-2)
+              ... | method | self | arg1 | ... | argN
+                                                 ^- TOP()
+                                    ^- (-oparg)
+                             ^- (-oparg-1)
+                    ^- (-oparg-2)
 
-       `self` and `method` will be POPed by call_function.
-        We'll be passing `oparg + 1` to call_function, to
-        make it accept the `self` as a first argument.
+        `self` and `method` will be popped by ``call_function``.
+         We'll be passing `oparg + 1` to call_function, to
+         make it accept the `self` as a first argument.
 
         """
         raise self.vm.PyVMError("PRECALL not implemented")
 
     def PUSH_NULL(self):
-        """
-        Pushes a NULL to the stack. Used in the call sequence to match the NULL pushed by
-        LOAD_METHOD for non-method calls.
+        """Pushes a NULL to the stack. Used in the call sequence to
+        match the NULL pushed by LOAD_METHOD for non-method calls.
+
         """
         self.vm.push(None)
 
@@ -159,7 +162,6 @@ class ByteOp311(ByteOp310):
         self.vm.set(i, tos)
         self.vm.set(0, stack_i)
 
-
     def CHECK_EXC_MATCH(self):
         """
         To be continued...
@@ -174,13 +176,11 @@ class ByteOp311(ByteOp310):
         # FIXME: check for interrupts.
         self.vm.jump(-delta)
 
-
     def POP_JUMP_BACKWARD_NO_INTERRUPT(self, delta: int):
         """
         Decrements bytecode counter by delta. Does not check for interrupts.
         """
         self.vm.jump(-delta)
-
 
     def POP_JUMP_FORWARD_IF_TRUE(self, delta: int):
         """
@@ -190,7 +190,6 @@ class ByteOp311(ByteOp310):
         if val == True:  # noqa
             self.vm.jump(delta)
 
-
     def POP_JUMP_BACKWARD_IF_TRUE(self, delta: int):
         """
         If TOS is true, decrements the bytecode counter by delta. TOS is popped.
@@ -198,7 +197,6 @@ class ByteOp311(ByteOp310):
         val = self.vm.pop()
         if val == True:  # noqa
             self.vm.jump(-delta)
-
 
     def POP_JUMP_FORWARD_IF_FALSE(self, delta: int):
         """
@@ -208,7 +206,6 @@ class ByteOp311(ByteOp310):
         if val == False:  # noqa
             self.vm.jump(delta)
 
-
     def POP_JUMP_BACKWARD_IF_FALSE(self, delta: int):
         """
         If TOS is false, decrements the bytecode counter by delta. TOS is popped.
@@ -216,7 +213,6 @@ class ByteOp311(ByteOp310):
         val = self.vm.pop()
         if val == False:  # noqa
             self.vm.jump(-delta)
-
 
     def POP_JUMP_FORWARD_IF_NOT_NONE(self, delta: int):
         """
@@ -226,7 +222,6 @@ class ByteOp311(ByteOp310):
         if val is not None:
             self.vm.jump(delta)
 
-
     def POP_JUMP_BACKWARD_IF_NOT_NONE(self, delta: int):
         """
         If TOS is not None, decrements the bytecode counter by delta. TOS is popped.
@@ -234,7 +229,6 @@ class ByteOp311(ByteOp310):
         val = self.vm.pop()
         if val is not None:
             self.vm.jump(-delta)
-
 
     def POP_JUMP_FORWARD_IF_NONE(self, delta: int):
         """
@@ -244,7 +238,6 @@ class ByteOp311(ByteOp310):
         if val is None:
             self.vm.jump(delta)
 
-
     def POP_JUMP_BACKWARD_IF_NONE(self, delta: int):
         """
         If TOS is not None, decrements the bytecode counter by delta. TOS is popped.
@@ -252,7 +245,6 @@ class ByteOp311(ByteOp310):
         val = self.vm.pop()
         if val is None:
             self.vm.jump(-delta)
-
 
     def JUMP_IF_TRUE_OR_POP(self, delta: int):
         """
@@ -267,7 +259,6 @@ class ByteOp311(ByteOp310):
         if val == True:  # noqa
             self.vm.jump(delta)
         self.vm.pop()
-
 
     def RESUME(self, where: int):
         """

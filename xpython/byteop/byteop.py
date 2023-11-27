@@ -179,8 +179,9 @@ class ByteOpBase(object):
                 self.vm.push(frame.f_locals)
                 return
             elif func == compile:
-                # Set dont_inherit parameter.
-                # FIXME: we should set other flags too based on the interpreted environment?
+                # Set dont_inherit parameter.  FIXME: we should set
+                # other flags too based on the interpreted
+                # environment?
                 if len(pos_args) < 5 and "dont_inherit" not in named_args:
                     named_args["dont_inherit"] = True
                     pass
@@ -225,7 +226,8 @@ class ByteOpBase(object):
                 else:
                     if not self.cross_bytecode_exec_warning_shown:
                         log.warning(
-                            "Running built-in `exec()` because we are cross-version interpreting version %s from version %s."
+                            "Running built-in `exec()` because we are cross-version "
+                            "interpreting version %s from version %s."
                             % (
                                 version_tuple_to_str(self.version_info, end=2),
                                 version_tuple_to_str(PYTHON_VERSION_TRIPLE, end=2),
@@ -263,7 +265,8 @@ class ByteOpBase(object):
                 else:
                     if not self.cross_bytecode_eval_warning_shown:
                         log.warning(
-                            "Running built-in `eval()` because we are cross-version interpreting version %s from version %s."
+                            "Running built-in `eval()` because we are cross-version "
+                            "interpreting version %s from version %s."
                             % (
                                 version_tuple_to_str(self.version_info, end=2),
                                 version_tuple_to_str(PYTHON_VERSION_TRIPLE, end=2),
@@ -274,7 +277,8 @@ class ByteOpBase(object):
             elif PYTHON_VERSION_TRIPLE >= (3, 0) and func == __build_class__:
                 assert (
                     len(pos_args) > 0
-                ), "__build_class__() should have at least one argument, an __init__() function."
+                ), ("__build_class__() should have at least one argument, an "
+                    "__init__() function.")
                 init_fn = pos_args[0]
                 if (
                     isinstance(init_fn, Function)
@@ -289,8 +293,9 @@ class ByteOpBase(object):
                     self.vm.push(retval)
                     return
                 else:
-                    # Use builtin __build_class__(). However for that, we need a native function.
-                    # This is wrong though in that we won't trace into __init__().
+                    # Use builtin __build_class__(). However for that,
+                    # we need a native function.  This is wrong though
+                    # in that we won't trace into __init__().
                     init_fn = pos_args[0]
                     if isinstance(init_fn, Function) and init_fn in self.vm.fn2native:
                         pos_args[0] = self.vm.fn2native[init_fn]
@@ -405,7 +410,7 @@ class ByteOpBase(object):
             else:
                 return "reraise"
 
-        elif type(exc) == type:
+        elif type(exc) is type:
             # As in `raise ValueError`
             exc_type = exc
             val = exc()  # Make an instance.
@@ -420,7 +425,7 @@ class ByteOpBase(object):
         # val is a valid exception instance and exc_type is its class.
         # Now do a similar thing for the cause, if present.
         if cause:
-            if type(cause) == type:
+            if type(cause) is type:
                 cause = cause()
             elif not isinstance(cause, BaseException):
                 return "exception"  # error

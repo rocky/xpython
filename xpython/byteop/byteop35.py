@@ -33,7 +33,7 @@ class ByteOp35(ByteOp34):
 
     def build_container_flat(self, count, container_fn):
         elts = self.vm.popn(count)
-        self.vm.push(container_fn(e for l in elts for e in l))
+        self.vm.push(container_fn(e for elt in elts for e in elt))
 
     def get_awaitable_iter(self, o):
         # This helper function returns an awaitable for `o`:
@@ -199,7 +199,8 @@ class ByteOp35(ByteOp34):
             self.vm.push("silenced")
             return "silenced"
 
-    # All of the following opcodes expect arguments. An argument is two bytes, with the more significant byte last.
+    # All of the following opcodes expect arguments. An argument is
+    # two bytes, with the more significant byte last.
 
     def BUILD_TUPLE_UNPACK(self, count):
         """

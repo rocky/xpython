@@ -1,3 +1,6 @@
+"""
+List of bytecode and Python versions that xpython has support for
+"""
 # The below has extra commas for POSIX shell's taste, but that's okay
 SUPPORTED_PYTHON = (
     (2, 7),

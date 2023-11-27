@@ -50,7 +50,8 @@ class ByteOp27(ByteOp26):
                 pass
             else:
                 raise self.vm.PyVMError(
-                    "Can't find method function attribute; tried '__func__' and '_im_func'"
+                    "Can't find method function attribute; tried '__func__' "
+                    "and '_im_func'"
                 )
             pass
 
