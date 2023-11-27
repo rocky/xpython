@@ -80,7 +80,8 @@ class ByteOp26(ByteOp25):
         #         name, frame.f_globals, frame.f_locals, fromlist, level
         #     )
         # else:
-        #     module = __import__(name, frame.f_globals, frame.f_locals, fromlist, level)
+        #     module = __import__(name, frame.f_globals, frame.f_locals,
+        #                         fromlist, level)
 
         # INVESTIGATE: the above doesn't work for things like "import os.path as osp"
         # The module it finds ins os.posixpath which doesn't have a "path" attribute
@@ -89,10 +90,13 @@ class ByteOp26(ByteOp25):
         assert level >= -1, "Invalid Level number %s on IMPORT_NAME" % level
         module = None
         if level == -1:
-            # In Python 2.6 added the level parameter and it was -1 by default until but not including 3.0.
-            # -1 means try relative imports before absolute imports.
+            # In Python 2.6 added the level parameter and it was -1 by
+            # default until but not including 3.0.  -1 means try
+            # relative imports before absolute imports.
             if PYTHON_VERSION_TRIPLE >= (3, 0):
-                # FIXME: give warning that we can't handle absolute import. Or fix up code to handle possible absolute import.
+                # FIXME: give warning that we can't handle absolute
+                # import. Or fix up code to handle possible absolute
+                # import.
                 level = 0
             else:
                 module = __import__(

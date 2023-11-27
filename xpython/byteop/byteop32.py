@@ -67,7 +67,8 @@ class ByteOp32(ByteOp27):
         self.vm.unwind_block(block)
 
     def LOAD_BUILD_CLASS(self):
-        """Pushes builtins.__build_class__() onto the stack. It is later called by CALL_FUNCTION to construct a class."""
+        """Pushes builtins.__build_class__() onto the stack. It is
+        later called by CALL_FUNCTION to construct a class."""
         self.vm.push(__build_class__)
 
     def MAKE_CLOSURE(self, argc: int):
@@ -121,18 +122,21 @@ class ByteOp32(ByteOp27):
 
         self.vm.push(fn)
 
-
     # Changed from 2.7
     # 3.2 has kwdefaults that aren't allowed in 2.7
     def MAKE_FUNCTION(self, argc: int):
         """
-        Pushes a new function object on the stack. From bottom to top, the consumed stack must consist of:
+        Pushes a new function object on the stack. From bottom to top, the consumed
+        stack must consist of:
 
         * argc & 0xFF default argument objects in positional order
-        * (argc >> 8) & 0xFF pairs of name and default argument, with the name just below the object on the stack, for keyword-only parameters
+        * (argc >> 8) & 0xFF pairs of name and default argument, with the name just
+          below the object on the stack, for keyword-only parameters
         * (argc >> 16) & 0x7FFF parameter annotation objects
-        * a tuple listing the parameter names for the annotations (only if there are ony annotation objects)
-        * the code associated with the function (at TOS1 if 3.3+ else at TOS for 3.0..3.2)
+        * a tuple listing the parameter names for the annotations (only if there are
+          only annotation objects)
+        * the code associated with the function (at TOS1 if 3.3+ else at TOS for
+          3.0..3.2)
         * the qualified name of the function (at TOS if 3.3+)
         """
         default_count, kw_default_count, annotate_count = parse_fn_counts_30_35(argc)
@@ -234,7 +238,8 @@ class ByteOp32(ByteOp27):
 
     # Note: this is gone in 3.4
     def STORE_LOCALS(self):
-        """Pops TOS from the stack and stores it as the current frames f_locals. This is used in class construction."""
+        """Pops TOS from the stack and stores it as the current frames
+        f_locals. This is used in class construction."""
         self.vm.frame.f_locals = self.vm.pop()
 
     def RAISE_VARARGS(self, argc: int):

@@ -154,7 +154,8 @@ class ByteOp36(ByteOp35):
         the consumed stack must consist of values if the argument
         carries a specified flag value
 
-        * 0x01 a tuple of default values for positional-only and positional-or-keyword parameters in positional order
+        * 0x01 a tuple of default values for positional-only and positional-or-keyword
+               parameters in positional order
         * 0x02 a dictionary of the default values for the keyword-only parameters
                the key is the parameter name and the value is the default value
         * 0x04 an annotation dictionary
@@ -193,7 +194,6 @@ class ByteOp36(ByteOp35):
 
         fn_vm = Function(
             name=name,
-            qualname=qualname,
             code=code,
             globs=globs,
             argdefs=slot["defaults"],
@@ -201,6 +201,7 @@ class ByteOp36(ByteOp35):
             vm=self.vm,
             kwdefaults=slot["kwdefaults"],
             annotations=slot["annotations"],
+            qualname=qualname,
         )
 
         if argc == 0 and code.co_name in COMPREHENSION_FN_NAMES:
@@ -233,7 +234,8 @@ class ByteOp36(ByteOp35):
         * (flags & 0x03) == 0x01: call str() on value before formatting it.
         * (flags & 0x03) == 0x02: call repr() on value before formatting it.
         * (flags & 0x03) == 0x03: call ascii() on value before formatting it.
-        * (flags & 0x04) == 0x04: pop fmt_spec from the stack and use it, else use an empty fmt_spec.
+        * (flags & 0x04) == 0x04: pop fmt_spec from the stack and use it, else use an
+           empty fmt_spec.
 
         Formatting is performed using PyObject_Format(). The result is
         pushed on the stack.
