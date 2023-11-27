@@ -166,7 +166,11 @@ class Function:
         # In Python 3.x is various generators and list comprehensions have a .0 arg
         # but inspect doesn't show that. In the various MAKE_FUNCTION routines,
         # we will detect this and store True in this field when appropriate.
-        if not argdefs and self.__name__.split(".")[-1] in COMPREHENSION_FN_NAMES:
+        if (
+            not argdefs
+            and hasattr(self, "__name")
+            and self.__name__.split(".")[-1] in COMPREHENSION_FN_NAMES
+        ):
             self.has_dot_zero = True
         else:
             self.has_dot_zero = False
@@ -189,7 +193,11 @@ class Function:
         # The intent in providing native functions is for use in type
         # testing, mostly. The functions should not be run, since that defeats our
         # ability to trace functions.
-        kw = {"argdefs": self.func_defaults}
+        if hasattr(self, "func_defaults"):
+            kw = {"argdefs": self.func_defaults}
+        else:
+            kw = {}
+
         if closure:
             kw["closure"] = tuple(make_cell(0) for _ in closure)
 
@@ -216,7 +224,11 @@ class Function:
             self._func = None
 
     def __repr__(self):  # pragma: no cover
-        return "<Function %s at 0x%08x>" % (self.func_name, id(self))
+        if hasattr(self, "func_name"):
+            return "<Function %s at 0x%08x>" % (self.func_name, id(self))
+        elif hasattr (self, "_func"):
+            return str(self._func)
+        return "<Function at 0x%08x>" % (id(self))
 
     def __get__(self, instance, owner):
         if instance is not None:
