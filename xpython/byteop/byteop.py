@@ -108,8 +108,9 @@ def fmt_unary_op(vm, arg=None, repr=repr):
     the evaluation stack
     """
     # We need to check the length because sometimes in a return event,
-    # as opposed to a RETURN_VALUE, callback can return the value has been popped, and if the
-    # return values was the only one on the stack, it will be empty here.
+    # as opposed to a RETURN_VALUE, callback can return the value has
+    # been popped, and if the return values was the only one on the
+    # stack, it will be empty here.
     if len(vm.frame.stack):
         return " (%s)" % (repr(vm.top()),)
     else:

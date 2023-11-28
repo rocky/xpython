@@ -5,17 +5,16 @@ import os
 import os.path as osp
 import sys
 import tokenize
+
 # To silence the "import imp" DeprecationWarning below
 import warnings
 from typing import Optional
 
 from xdis import load_module
-from xdis.version_info import (IS_PYPY, PYTHON_VERSION_TRIPLE,
-                               version_tuple_to_str)
+from xdis.version_info import IS_PYPY, PYTHON_VERSION_TRIPLE, version_tuple_to_str
 
 from xpython.stdlib.builtins import make_compatible_builtins
-from xpython.version_info import (SUPPORTED_BYTECODE, SUPPORTED_PYPY,
-                                  SUPPORTED_PYTHON)
+from xpython.version_info import SUPPORTED_BYTECODE, SUPPORTED_PYPY, SUPPORTED_PYTHON
 from xpython.vm import PyVM, PyVMUncaughtException, format_instruction
 from xpython.vmtrace import PyVMTraced
 
@@ -236,7 +235,10 @@ def run_python_file(
 
                 if source_is_older(code.co_filename, filename):
                     print(
-                        f"Warning: source file {code.co_filename} is newer than bytecode {filename}"
+                        (
+                            f"Warning: source file {code.co_filename} is newer "
+                            f"than bytecode {filename}"
+                        )
                     )
                     # Hack to update test code. Remove when we have a standalone program to fix.
                     # os.system(f"/bin/bash ./add-single-test.sh {code.co_filename}")

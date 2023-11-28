@@ -160,8 +160,9 @@ class PyVMTraced(PyVM):
             self.push_frame(frame)
             if frame.f_trace and (frame.event_flags & PyVMEVENT_CALL):
                 if frame.event_flags & PyVMEVENT_STEP_OVER:
-                    # Since we are about to enter a function, but not tracing it, clear return-like events
-                    # return and yield
+                    # Since we are about to enter a function, but not
+                    # tracing it, clear return-like events return and
+                    # yield
                     frame.event_flags &= ~(PyVMEVENT_RETURN | PyVMEVENT_YIELD)
                 else:
                     result = frame.f_trace(
@@ -324,14 +325,16 @@ class PyVMTraced(PyVM):
 
         if why == "exception":
             if self.last_exception and self.last_exception[0]:
-                # For now we are dropping the traceback; ".with_excpetion(self.last_exception[2])
+                # For now, we are dropping the traceback;
+                # ".with_excpetion(self.last_exception[2])
                 raise self.last_exception[1]
                 # Older code which may be of use sometimes
                 # six.reraise(*self.last_exception)
             else:
                 raise PyVMError("Borked exception recording")
             # if self.exception and .... ?
-            # log.error("Haven't finished traceback handling, nulling traceback information for now")
+            # log.error("Haven't finished traceback handling, nulling traceback "
+            #           "information for now")
             # six.reraise(self.last_exception[0], None)
 
         self.in_exception_processing = False

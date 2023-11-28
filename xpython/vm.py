@@ -765,7 +765,8 @@ class PyVM(object):
             else:
                 raise PyVMError("Borked exception recording")
             # if self.exception and .... ?
-            # log.error("Haven't finished traceback handling, nulling traceback information for now")
+            # log.error("Haven't finished traceback handling, nulling traceback "
+            #            "information for now")
             # six.reraise(self.last_exception[0], None)
 
         self.in_exception_processing = False
