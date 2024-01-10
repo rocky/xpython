@@ -14,7 +14,7 @@ del ByteOp24.JUMP_IF_TRUE
 
 
 def fmt_set_add(vm, arg, repr_fn=repr):
-    return f" set.add({repr_fn(vm.peek(arg))}, {repr_fn(vm.top())})"
+    return " set.add(%s, %s)" % (repr_fn(vm.peek(arg)), repr_fn(vm.top()))
 
 
 def fmt_map_add(vm, arg, repr_fn=repr):

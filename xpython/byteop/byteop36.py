@@ -51,7 +51,7 @@ def fmt_call_function(vm, argc, repr=repr):
     # FIXME: give info on pos_args. Right now this is okay only for pos_args == 0
     for attr in ("co_name", "func_name", "__name__"):
         if hasattr(TOS, attr):
-            return f" ({getattr(TOS, attr)})"
+            return " (%s)" % getattr(TOS, attr)
 
     # Nothing found.
     return ""
@@ -63,7 +63,7 @@ def fmt_call_function_kw(vm, argc, repr=repr):
     """
     namedargs_tup = vm.top()
     func = vm.peek(argc + 2)
-    return f" (keyword: {namedargs_tup}, function: {func})"
+    return " (keyword: %s, function: %s)" % (namedargs_tup, func)
 
 
 class ByteOp36(ByteOp35):

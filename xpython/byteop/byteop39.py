@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2021 Rocky Bernstein
+# Copyright (C) 2021, 2024 Rocky Bernstein
 # This program comes with ABSOLUTELY NO WARRANTY.
 # This is free software, and you are welcome to redistribute it
 # under certain conditions.
@@ -121,7 +121,7 @@ class ByteOp39(ByteOp38):
         assert isinstance(destination, dict)
         dups = set(destination.keys()) & set(TOS.keys())
         if bool(dups):
-            raise RuntimeError(f"Duplicate keys '{dups}' in DICT_MERGE")
+            raise RuntimeError("Duplicate keys '%s' in DICT_MERGE" % dups)
         destination.update(TOS)
 
     def DICT_UPDATE(self, i):

@@ -31,8 +31,8 @@ def make_compatible_builtins(builtins: dict, target_python: tuple):
     """
     if type(target_python) is not tuple:
         target_python = (int(str(target_python)[0]), int(str(target_python)[2]))
-    short_name = f"builtins_{target_python[0]}{target_python[1]}"
-    import_name = f"xpython.stdlib.{short_name}"
+    short_name = "builtins_%s%s" % (target_python[0], target_python[1])
+    import_name = "xpython.stdlib.%s" % short_name
     try:
         module_root = import_fn(import_name)
     except Exception:

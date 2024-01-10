@@ -53,11 +53,11 @@ def get_cell_name(vm, i):
 
 
 def fmt_store_deref(vm, int_arg, repr=repr):
-    return f" ({vm.top()})"
+    return " (%s)" % (vm.top())
 
 
 def fmt_load_deref(vm, int_arg, repr=repr):
-    return f" ({vm.frame.cells[get_cell_name(vm, int_arg)].get()})"
+    return " (%s)" % (vm.frame.cells[get_cell_name(vm, int_arg)].get())
 
 
 def fmt_call_function(vm, argc, repr=repr):
@@ -68,7 +68,7 @@ def fmt_call_function(vm, argc, repr=repr):
     code = vm.peek(name_default + pos_args + 1)
     for attr in ("co_name", "func_name", "__name__"):
         if hasattr(code, attr):
-            return f" ({getattr(code, attr)})"
+            return " (%s)" % getattr(code, attr)
 
     # Nothing found.
     return ""
@@ -81,7 +81,7 @@ def fmt_make_function(vm, arg=None, repr=repr):
     TOS = vm.top()
     for attr in ("co_name", "func_name", "__name__"):
         if hasattr(TOS, attr):
-            return f" ({getattr(TOS, attr)})"
+            return " (%s)" % getattr(TOS, attr)
 
     # Nothing found.
     return ""
@@ -124,7 +124,7 @@ class ByteOp24(ByteOpBase):
         """
         returns string of the first two elements of stack
         """
-        return f" ({vm.peek(1)})"
+        return " (%s)" % vm.peek(1)
 
     def BRKPT(self):
         """Pseudo opcode: breakpoint. We added this. TODO: call callback, then run
@@ -640,7 +640,7 @@ class ByteOp24(ByteOpBase):
         elif name in f.f_builtins:
             val = f.f_builtins[name]
         else:
-            raise NameError(f"global name '{name}' is not defined")
+            raise NameError("global name '%s' is not defined" % name)
         self.vm.push(val)
 
     def SETUP_LOOP(self, jump_offset):
@@ -689,7 +689,7 @@ class ByteOp24(ByteOpBase):
             val = self.vm.frame.f_locals[name]
         else:
             raise UnboundLocalError(
-                f"local variable '{name}' referenced before assignment"
+                "local variable '%s' referenced before assignment" % name
             )
         self.vm.push(val)
 
@@ -796,7 +796,7 @@ class ByteOp24(ByteOpBase):
             x, y, z = self.vm.popn(3)
             self.vm.push(slice(x, y, z))
         else:  # pragma: no cover
-            raise self.vm.PyVMError(f"Strange BUILD_SLICE count: {count!r}")
+            raise self.vm.PyVMError("Strange BUILD_SLICE count: %r" % count)
 
     def RAISE_VARARGS(self, argc):
         """

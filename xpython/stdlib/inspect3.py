@@ -162,7 +162,7 @@ class MyParameter(Parameter):
 
         if default is not _empty:
             if kind in (VAR_POSITIONAL, VAR_KEYWORD):
-                msg = f"{kind} parameters cannot have default values"
+                msg = "{} parameters cannot have default values".format(kind)
                 raise ValueError(msg)
         self._default = default
         self._annotation = annotation
@@ -172,10 +172,10 @@ class MyParameter(Parameter):
             raise ValueError("name is a required attribute for Parameter")
 
         if not isinstance(name, str):
-            raise TypeError(f"name must be a str, not a {name!r}")
+            raise TypeError("name must be a str, not a {!r}".format(name))
 
         if not (name.isidentifier() or name == ".0"):
-            raise ValueError(f"{name!r} is not a valid parameter name")
+            raise ValueError("{!r} is not a valid parameter name".format(name))
 
         self._name = name
 
@@ -258,12 +258,12 @@ def getcallargs(*func_and_positional, **named):
         if kw not in possible_kwargs:
             if not varkw:
                 raise TypeError(
-                    f"{f_name}() got an unexpected keyword argument {kw!r}"
+                    "%s() got an unexpected keyword argument %r" % (f_name, kw)
                 )
             arg2value[varkw][kw] = value
             continue
         if kw in arg2value:
-            raise TypeError(f"{f_name}() got multiple values for argument {kw!r}")
+            raise TypeError("%s() got multiple values for argument %r" % (f_name, kw))
         arg2value[kw] = value
     if num_pos > num_args and not varargs:
         _too_many(f_name, args, kwonlyargs, varargs, num_defaults, num_pos, arg2value)
@@ -415,7 +415,7 @@ def _signature_from_function(cls, func):
         else:
             # If it's not a pure Python function, and not a duck type
             # of pure function:
-            raise TypeError(f"{func!r} is not a Python function")
+            raise TypeError("%r is not a Python function" % func)
 
     # parameter_class = cls._parameter_cls
     # if parameter_class != InspectParameter:
@@ -512,7 +512,7 @@ def _signature_from_callable(
 
     # We don't want to import pyobj, since that imports us
     if not xCallable(obj):
-        raise TypeError(f"{obj!r} is not a callable object")
+        raise TypeError("%r is not a callable object" % obj)
 
     if isinstance(obj, types.MethodType):
         # In this case we skip the first parameter of the underlying
@@ -551,7 +551,7 @@ def _signature_from_callable(
         if sig is not None:
             if not isinstance(sig, Signature):
                 raise TypeError(
-                    f"unexpected object {sig!r} in __signature__ attribute"
+                    "unexpected object %r in __signature__ " "attribute" % sig
                 )
             return sig
 
@@ -671,7 +671,7 @@ def _signature_from_callable(
                     # Return a signature of 'object' builtin.
                     return signature(object)
                 else:
-                    raise ValueError(f"no signature found for builtin type {obj!r}")
+                    raise ValueError("no signature found for builtin type %r" % obj)
 
     elif not isinstance(obj, _NonUserDefinedCallables):
         # An object with __call__
@@ -688,7 +688,7 @@ def _signature_from_callable(
                     sigcls=sigcls,
                 )
             except ValueError:
-                msg = f"no signature found for {obj!r}"
+                msg = "no signature found for %r" % obj
                 raise ValueError(msg)  # from ex
 
     if sig is not None:
@@ -701,10 +701,10 @@ def _signature_from_callable(
 
     if isinstance(obj, types.BuiltinFunctionType):
         # Raise a nicer error message for builtins
-        msg = f"no signature found for builtin function {obj!r}"
+        msg = "no signature found for builtin function %r" % obj
         raise ValueError(msg)
 
-    raise ValueError(f"callable {obj!r} is not supported by signature")
+    raise ValueError("callable %r is not supported by signature" % obj)
 
 
 def _main():
@@ -733,7 +733,7 @@ def _main():
     try:
         obj = module = importlib.import_module(mod_name)
     except Exception as exc:
-        msg = f"Failed to import {mod_name} ({type(exc).__name__}: {exc})"
+        msg = "Failed to import %s (%s: %s)" % (mod_name, type(exc).__name__, exc)
         print(msg)
         exit(2)
 
@@ -750,13 +750,13 @@ def _main():
     from inspect import findsource, getsource, getsourcefile
 
     if args.details:
-        print(f"Target: {target}")
-        print(f"Origin: {getsourcefile(module)}")
-        print(f"Cached: {module.__cached__}")
+        print("Target: %s" % target)
+        print("Origin: %s" % getsourcefile(module))
+        print("Cached: %s" % module.__cached__)
         if obj is module:
-            print(f"Loader: {module.__loader__!r}")
+            print("Loader: %r" % (module.__loader__))
             if hasattr(module, "__path__"):
-                print(f"Submodule search path: {module.__path__}")
+                print("Submodule search path: %s" % module.__path__)
         else:
             try:
                 __, lineno = findsource(obj)

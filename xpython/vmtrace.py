@@ -5,6 +5,7 @@ This can be used in a debugger or profiler.
 import logging
 
 from xdis import IS_PYPY, PYTHON_VERSION_TRIPLE, codeType2Portable
+
 # We will add a new "DEBUG" opcode
 from xdis.opcodes.base import def_op
 
@@ -58,7 +59,7 @@ PyVMEVENT_NONE = 0
 def pretty_event_flags(flags):
     """Return pretty representation of trace event flags."""
     names = []
-    result = f"0x{flags:08x}"
+    result = "0x%08x" % flags
     for i in range(32):
         flag = 1 << i
         if flags & flag:
@@ -69,7 +70,7 @@ def pretty_event_flags(flags):
     else:
         names.append(hex(flags))
     names.reverse()
-    return f"{result} ({' | '.join(names)})"
+    return "%s (%s)" % (result, " | ".join(names))
 
 
 class PyVMTraced(PyVM):

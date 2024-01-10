@@ -114,17 +114,17 @@ class Function:
 
         if name is not None and not isinstance(name, str):
             raise TypeError(
-                f"Function() argument 1 (name) must None or string, not {type(name)}"
+                "Function() argument 1 (name) must None or string, not %s" % type(name)
             )
 
         if not iscode(code):
             raise TypeError(
-                f"Function() argument 2 (code) must be code, not {type(code)}"
+                "Function() argument 2 (code) must be code, not %s" % type(code)
             )
 
         if not isinstance(globs, dict):
             raise TypeError(
-                f"Function() argument 3 (argdefs) must be dict, not {type(globs)}"
+                "Function() argument 3 (argdefs) must be dict, not %s" % type(globs)
             )
 
         if closure is not None and not isinstance(closure, tuple):
@@ -226,10 +226,9 @@ class Function:
 
     def __repr__(self):  # pragma: no cover
         if hasattr(self, "func_name"):
-            return f"<Function {self.func_name} at 0x{id(self):08x}>"
+            return "<Function %s at 0x%08x>" % (self.func_name, id(self))
         elif hasattr(self, "_func"):
             return str(self._func)
-        return f"<Function at 0x{id(self):08x}>"
 
     def __get__(self, instance, owner):
         if instance is not None:
@@ -311,11 +310,11 @@ class Method(object):
         # self.__name__ = obj.__name__
 
     def __repr__(self):  # pragma: no cover
-        name = f"{self.im_class.__name__}.{self.im_func.func_name}"
+        name = "%s.%s" % (self.im_class.__name__, self.im_func.func_name)
         if self.im_self is not None:
-            return f"<Bound Method {name} of {self.im_self}>"
+            return "<Bound Method %s of %s>" % (name, self.im_self)
         else:
-            return f"<Unbound Method {name}>"
+            return "<Unbound Method %s>" % (name,)
 
     def __call__(self, *args, **kwargs):
         if self.im_self is not None:

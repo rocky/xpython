@@ -127,7 +127,7 @@ def format_instruction(
     )
     mess = "%s%3d: %s%s %s" % (line_str, offset, bytecode_name, stack_args, argrepr)
     if extra_debug and frame:
-        mess += f" {code.co_name} in {code.co_filename}:{frame.f_lineno}"
+        mess += " %s in %s:%s" % (code.co_name, code.co_filename, frame.f_lineno)
     return mess
 
 
@@ -378,7 +378,7 @@ class PyVM(object):
                 raise
             if self.last_traceback:
                 self.last_traceback.print_tb()
-                print(f"{self.last_exception[0].__name__}", end="")
+                print("%s" % self.last_exception[0].__name__, end="")
                 le1 = self.last_exception[1]
                 tail = ""
                 if le1:
@@ -391,7 +391,7 @@ class PyVM(object):
             if self.frames:  # pragma: no cover
                 raise PyVMError("Frames left over!")
             if self.frame and self.frame.stack:  # pragma: no cover
-                raise PyVMError(f"Data left on stack! {self.frame.stack!r}")
+                raise PyVMError("Data left on stack! %r" % self.frame.stack)
 
         return val
 
@@ -523,9 +523,9 @@ class PyVM(object):
         stack_rep = repper(self.frame.stack)
         block_stack_rep = repper(self.frame.block_stack)
 
-        log.debug(f"  {indent}frame.stack: {stack_rep}")
-        log.debug(f"  {indent}blocks     : {block_stack_rep}")
-        log.info(f"{indent}{op}")
+        log.debug("  %sframe.stack: %s" % (indent, stack_rep))
+        log.debug("  %sblocks     : %s" % (indent, block_stack_rep))
+        log.info("%s%s" % (indent, op))
 
     def dispatch(self, bytecode_name, int_arg, arguments, offset, line_number):
         """Dispatch by bytecode_name to the corresponding methods.
