@@ -8,6 +8,7 @@ if PYTHON_VERSION_TRIPLE >= (3, 0):
     import importlib
     from builtins import input
     from functools import reduce
+
     if PYTHON_VERSION_TRIPLE >= (3, 4):
         from importlib import reload
     else:
@@ -112,7 +113,8 @@ compatable_fns = {
     "cmp": cmp,  # Python 1.x-2.x
     "coerce": coerce,  # Python 1.x-2.x
     "execfile": execfile,  # Python 1.x-2.x
-    "file": open,  # Python 1.x-2.x. Do we eneed to worry about open() mode "rb", vs "rt"?
+    "file": open,  # Python 1.x-2.x. Do we eneed to worry about open() mode "rb",
+                   # vs "rt"?
     "intern": intern,  # Python 1.x-2.x
     "long": int,  # Python 1.x-2.x
     "reduce": reduce,  # Python 1.x-2.x

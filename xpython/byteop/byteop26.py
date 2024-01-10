@@ -54,7 +54,7 @@ class ByteOp26(ByteOp25):
         level, fromlist = self.vm.popn(2)
         frame = self.vm.frame
 
-        # Should we replace import "name" with a compatabliity version?
+        # Should we replace import "name" with a compatibility version?
         if name in xpython.stdlib.__all__:
             name = "xpython.stdlib.%s" % name
 
@@ -90,7 +90,7 @@ class ByteOp26(ByteOp25):
         assert level >= -1, "Invalid Level number %s on IMPORT_NAME" % level
         module = None
         if level == -1:
-            # In Python 2.6 added the level parameter and it was -1 by
+            # In Python 2.6 added the level parameter, and it was -1 by
             # default until but not including 3.0.  -1 means try
             # relative imports before absolute imports.
             if PYTHON_VERSION_TRIPLE >= (3, 0):

@@ -23,8 +23,12 @@ if PYTHON_VERSION_TRIPLE >= (3, 0):
 else:
     import_fn = __import__
 
-from xpython.byteop.byteop import (ByteOpBase, fmt_binary_op, fmt_ternary_op,
-                                   fmt_unary_op)
+from xpython.byteop.byteop import (
+    ByteOpBase,
+    fmt_binary_op,
+    fmt_ternary_op,
+    fmt_unary_op,
+)
 from xpython.pyobj import Cell, Function, traceback_from_frame
 from xpython.vmtrace import PyVMEVENT_RETURN, PyVMEVENT_YIELD
 
@@ -98,7 +102,7 @@ class ByteOp24(ByteOpBase):
         ).split():
             self.stack_fmt[opname] = fmt_binary_op
 
-        for opname in ("ROT_THREE STORE_SUBSCR EXEC_STMT BUILD_CLASS").split():
+        for opname in "ROT_THREE STORE_SUBSCR EXEC_STMT BUILD_CLASS".split():
             self.stack_fmt[opname] = fmt_ternary_op
 
         for opname in (
@@ -175,17 +179,17 @@ class ByteOp24(ByteOpBase):
     ############################################################################
 
     def NOP(self):
-        "Do nothing code. Used as a placeholder by the bytecode optimizer."
+        """Do nothing code. Used as a placeholder by the bytecode optimizer."""
         pass
 
     # Stack manipulation
 
     def POP_TOP(self):
-        "Removes the top-of-stack (TOS) item."
+        """Removes the top-of-stack (TOS) item."""
         self.vm.pop()
 
     def ROT_TWO(self):
-        "Swaps the two top-most stack items."
+        """Swaps the two top-most stack items."""
         a, b = self.vm.popn(2)
         self.vm.push(b, a)
 
@@ -423,7 +427,7 @@ class ByteOp24(ByteOpBase):
         delattr(obj, name)
 
     def STORE_GLOBAL(self, name):
-        "Works as STORE_NAME, but stores the name as a global."
+        """Works as STORE_NAME, but stores the name as a global."""
         f = self.vm.frame
         f.f_globals[name] = self.vm.pop()
 
@@ -727,7 +731,7 @@ class ByteOp24(ByteOpBase):
             """
             This opcode is obsolete.
 
-            It we last seen in Python 2.2.
+            It was last seen in Python 2.2.
             """
             self.vm.frame.f_lineno = lineno
 
@@ -804,6 +808,7 @@ class ByteOp24(ByteOpBase):
         # NOTE: the dis docs quoted above are completely wrong about the order of the
         # operands on the stack!
         tb = None
+        exctype = None
         if argc == 0:
             exctype, val, tb = self.vm.last_exception
         elif argc == 1:
@@ -812,7 +817,7 @@ class ByteOp24(ByteOpBase):
         elif argc == 2:
             val = self.vm.pop()
             # Investigate: right now we see this *only* in 2.6.
-            # Can it happen in other bytecode vesrions?
+            # Can it happen in other bytecode versions?
             if self.version_info[:2] == (2, 6):
                 val = AssertionError(val)
             exctype = self.vm.pop()

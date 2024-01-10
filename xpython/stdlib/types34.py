@@ -29,7 +29,7 @@ CodeType = type(_f.__code__)
 MappingProxyType = type(type.__dict__)
 SimpleNamespace = type(sys.implementation)
 
-if PYTHON_VERSION_TRIPLE > (3, 4):
+if PYTHON_VERSION_TRIPLE >= (3, 5):
     exec(
         """
 async def _c(): pass
@@ -252,7 +252,6 @@ def coroutine(func):
         raise TypeError("types.coroutine() expects a callable")
 
     if isfunction(func) and getattr(func, "__code__", None).__class__ is CodeType:
-
         co_flags = func.__code__.co_flags
 
         # Check if 'func' is a coroutine function.

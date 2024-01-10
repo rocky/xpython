@@ -5,6 +5,7 @@ import linecache
 import types
 from copy import copy
 from sys import stderr
+
 from xdis import CO_GENERATOR, CO_ITERABLE_COROUTINE, iscode
 from xdis.version_info import PYTHON3, PYTHON_VERSION_TRIPLE
 
@@ -16,10 +17,10 @@ else:
         pass
 
 
-import xpython.stdlib.inspect3 as inspect3
-import xpython.stdlib.inspect2 as inspect2
-
 import six
+
+import xpython.stdlib.inspect2 as inspect2
+import xpython.stdlib.inspect3 as inspect3
 
 PY2 = not PYTHON3
 
@@ -37,7 +38,7 @@ def make_cell(value):
 
 # It might be the case that this is more useful in Python 2.x
 # which doesn't seem to show traceback of interpreted code.
-# Python 3.x does this but it also shows junk at the end.
+# Python 3.x does this, but it also shows junk at the end.
 Traceback = collections.namedtuple("_Traceback", "tb_frame tb_lasti tb_lineno tb_next")
 try:
     Traceback.tb_frame.__doc__ = "frame object at this level"
@@ -166,7 +167,11 @@ class Function:
         # In Python 3.x is various generators and list comprehensions have a .0 arg
         # but inspect doesn't show that. In the various MAKE_FUNCTION routines,
         # we will detect this and store True in this field when appropriate.
-        if not argdefs and self.__name__.split(".")[-1] in COMPREHENSION_FN_NAMES:
+        if (
+            not argdefs
+            and hasattr(self, "__name")
+            and self.__name__.split(".")[-1] in COMPREHENSION_FN_NAMES
+        ):
             self.has_dot_zero = True
         else:
             self.has_dot_zero = False
@@ -189,7 +194,11 @@ class Function:
         # The intent in providing native functions is for use in type
         # testing, mostly. The functions should not be run, since that defeats our
         # ability to trace functions.
-        kw = {"argdefs": self.func_defaults}
+        if hasattr(self, "func_defaults"):
+            kw = {"argdefs": self.func_defaults}
+        else:
+            kw = {}
+
         if closure:
             kw["closure"] = tuple(make_cell(0) for _ in closure)
 
@@ -216,7 +225,10 @@ class Function:
             self._func = None
 
     def __repr__(self):  # pragma: no cover
-        return "<Function %s at 0x%08x>" % (self.func_name, id(self))
+        if hasattr(self, "func_name"):
+            return "<Function %s at 0x%08x>" % (self.func_name, id(self))
+        elif hasattr(self, "_func"):
+            return str(self._func)
 
     def __get__(self, instance, owner):
         if instance is not None:
@@ -347,7 +359,7 @@ class Block(object):
 
     The equivalent of CPython's PyFrame_BlockSetup()
 
-    The are used in "try" and "with" statements; before Python 3.8 also in opcodes
+    They are used in "try" and "with" statements; before Python 3.8 also in opcodes
     associated with `for` (`SETUP_LOOP`) and `except` (`SETUP_EXCEPT`).
 
     From Python Include/frameobject.h:
@@ -568,8 +580,7 @@ class Generator(object):
 
 if __name__ == "__main__":
     frame = Frame(
-        traceback_from_frame.__code__, globals(), locals(), None,
-        PYTHON_VERSION_TRIPLE
+        traceback_from_frame.__code__, globals(), locals(), None, PYTHON_VERSION_TRIPLE
     )
     print(frame)
 

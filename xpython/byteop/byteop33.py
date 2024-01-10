@@ -18,7 +18,7 @@ class ByteOp33(ByteOp32):
         """
         Creates a new function object, sets its ``__closure__`` slot, and
         pushes it on the stack. TOS is the code qualified name of the
-        function, TOS is the the code associated with the function and
+        function, TOS is the code associated with the function and
         TOS1 is the tuple containing cells for the closure's free
         variables. The function asl has ``argc`` default parameters,
         which are found below the cells.
