@@ -90,7 +90,7 @@ class Parameter:
             raise ValueError("name is a required attribute for Parameter")
 
         if not isinstance(name, str):
-            msg = "name must be a str, not a {}".format(type(name).__name__)
+            msg = f"name must be a str, not a {type(name).__name__}"
             raise TypeError(msg)
 
         if name[0] == "." and name[1:].isdigit():
@@ -106,10 +106,10 @@ class Parameter:
                 msg = msg.format(_get_paramkind_descr(self._kind))
                 raise ValueError(msg)
             self._kind = POSITIONAL_ONLY
-            name = "implicit{}".format(name[1:])
+            name = f"implicit{name[1:]}"
 
         if not name.isidentifier():
-            raise ValueError("{!r} is not a valid parameter name".format(name))
+            raise ValueError(f"{name!r} is not a valid parameter name")
 
         self._name = name
 
@@ -163,13 +163,13 @@ class Parameter:
 
         # Add annotation and default value
         if self._annotation is not _empty:
-            formatted = "{}: {}".format(formatted, formatannotation(self._annotation))
+            formatted = f"{formatted}: {formatannotation(self._annotation)}"
 
         if self._default is not _empty:
             if self._annotation is not _empty:
-                formatted = "{} = {}".format(formatted, repr(self._default))
+                formatted = f"{formatted} = {repr(self._default)}"
             else:
-                formatted = "{}={}".format(formatted, repr(self._default))
+                formatted = f"{formatted}={repr(self._default)}"
 
         if kind == VAR_POSITIONAL:
             formatted = "*" + formatted
@@ -179,7 +179,7 @@ class Parameter:
         return formatted
 
     def __repr__(self):
-        return '<{} "{}">'.format(self.__class__.__name__, self)
+        return f'<{self.__class__.__name__} "{self}">'
 
     def __hash__(self):
         return hash((self.name, self.kind, self.annotation, self.default))
@@ -322,8 +322,8 @@ class BoundArguments:
     def __repr__(self):
         args = []
         for arg, value in self.arguments.items():
-            args.append("{}={!r}".format(arg, value))
-        return "<{} ({})>".format(self.__class__.__name__, ", ".join(args))
+            args.append(f"{arg}={value!r}")
+        return f"<{self.__class__.__name__} ({', '.join(args)})>"
 
 
 class Signature:
@@ -400,7 +400,7 @@ class Signature:
                             kind_defaults = True
 
                     if name in params:
-                        msg = "duplicate parameter name: {!r}".format(name)
+                        msg = f"duplicate parameter name: {name!r}"
                         raise ValueError(msg)
 
                     params[name] = param
@@ -569,9 +569,7 @@ class Signature:
 
                     if param.name in kwargs:
                         raise TypeError(
-                            "multiple values for argument {arg!r}".format(
-                                arg=param.name
-                            )
+                            f"multiple values for argument {param.name!r}"
                         )
 
                     arguments[param.name] = arg_val
@@ -605,7 +603,7 @@ class Signature:
                     and param.default is _empty
                 ):
                     raise TypeError(
-                        "missing a required argument: {arg!r}".format(arg=param_name)
+                        f"missing a required argument: {param_name!r}"
                     )
 
             else:
@@ -626,9 +624,7 @@ class Signature:
                 arguments[kwargs_param.name] = kwargs
             else:
                 raise TypeError(
-                    "got an unexpected keyword argument {arg!r}".format(
-                        arg=next(iter(kwargs))
-                    )
+                    f"got an unexpected keyword argument {next(iter(kwargs))!r}"
                 )
 
         return self._bound_arguments_cls(self, arguments)
@@ -658,7 +654,7 @@ class Signature:
         self._return_annotation = state["_return_annotation"]
 
     def __repr__(self):
-        return "<{} {}>".format(self.__class__.__name__, self)
+        return f"<{self.__class__.__name__} {self}>"
 
     def __str__(self):
         result = []
@@ -697,10 +693,10 @@ class Signature:
             # flag was not reset to 'False'
             result.append("/")
 
-        rendered = "({})".format(", ".join(result))
+        rendered = f"({', '.join(result)})"
 
         if self.return_annotation is not _empty:
             anno = formatannotation(self.return_annotation)
-            rendered += " -> {}".format(anno)
+            rendered += f" -> {anno}"
 
         return rendered

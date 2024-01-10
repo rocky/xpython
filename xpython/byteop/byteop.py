@@ -93,14 +93,14 @@ def fmt_binary_op(vm, arg=None, repr=repr):
     elements of evaluation stack
 
     """
-    return " (%s, %s)" % (repr(vm.peek(2)), repr(vm.top()))
+    return f" ({repr(vm.peek(2))}, {repr(vm.top())})"
 
 
 def fmt_ternary_op(vm, arg=None, repr=repr):
     """returns string of the repr() for each of the first three
     elements of evaluation stack
     """
-    return " (%s, %s, %s)" % (repr(vm.peek(3)), repr(vm.peek(2)), repr(vm.top()))
+    return f" ({repr(vm.peek(3))}, {repr(vm.peek(2))}, {repr(vm.top())})"
 
 
 def fmt_unary_op(vm, arg=None, repr=repr):
@@ -112,7 +112,7 @@ def fmt_unary_op(vm, arg=None, repr=repr):
     # been popped, and if the return values was the only one on the
     # stack, it will be empty here.
     if len(vm.frame.stack):
-        return " (%s)" % (repr(vm.top()),)
+        return f" ({repr(vm.top())})"
     else:
         raise vm.PyVMError("Empty stack in unary op")
 
@@ -170,7 +170,7 @@ class ByteOpBase(object):
 
         # FIXME: put this in a separate routine.
         if inspect.isbuiltin(func):
-            log.debug("handling built-in function %s" % func.__name__)
+            log.debug(f"handling built-in function {func.__name__}")
             if func == globals:
                 # Use the frame's globals(), not the interpreter's
                 self.vm.push(frame.f_globals)
@@ -330,7 +330,7 @@ class ByteOpBase(object):
             inspect.isfunction(func)
             and self.version_info[:2] == PYTHON_VERSION_TRIPLE[:2]
         ):
-            log.debug("calling native function %s" % func.__name__)
+            log.debug(f"calling native function {func.__name__}")
         elif inspect.isclass(func):
             if func.__name__ == "super":
                 pos_args = [self.vm.frame] + pos_args
@@ -474,7 +474,7 @@ class ByteOpBase(object):
         elif op == "MATRIX_MULTIPLY":
             operator.imatmul(x, y)
         else:  # pragma: no cover
-            raise self.PyVMError("Unknown in-place operator: %r" % op)
+            raise self.PyVMError(f"Unknown in-place operator: {op!r}")
         self.vm.push(x)
 
     def lookup_name(self, name):
@@ -487,7 +487,7 @@ class ByteOpBase(object):
         elif name in frame.f_builtins:
             val = frame.f_builtins[name]
         else:
-            raise NameError("name '%s' is not defined" % name)
+            raise NameError(f"name '{name}' is not defined")
         return val
 
     def print_item(self, item, to=None):

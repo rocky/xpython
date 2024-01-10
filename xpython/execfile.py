@@ -150,7 +150,7 @@ def run_python_module(modulename, args):
 
             # Complain if this is a magic non-file module.
             if openfile is None and pathname is None:
-                raise NoSourceError("module does not live in a file: %r" % modulename)
+                raise NoSourceError(f"module does not live in a file: {modulename!r}")
 
             # If `modulename` is actually a package, not a mere module, then we
             # pretend to be Python 2.7 and try running its __main__.py script.
@@ -268,7 +268,7 @@ def run_python_file(
                 python_version = PYTHON_VERSION_TRIPLE
 
         except (IOError, ImportError):
-            raise NoSourceError("No file to run: %r" % filename)
+            raise NoSourceError(f"No file to run: {filename!r}")
 
         # Execute the source file.
         exec_code_object(
@@ -297,7 +297,7 @@ def run_python_string(
     old_main_mod = sys.modules["__main__"]
     main_mod = new_module("__main__")
     sys.modules["__main__"] = main_mod
-    fake_path = main_mod.__file__ = "<string %s>" % source[:20]
+    fake_path = main_mod.__file__ = f"<string {source[:20]}>"
     if package:
         main_mod.__package__ = package
     main_mod.__builtins__ = BUILTINS

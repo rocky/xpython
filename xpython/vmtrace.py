@@ -58,7 +58,7 @@ PyVMEVENT_NONE = 0
 def pretty_event_flags(flags):
     """Return pretty representation of trace event flags."""
     names = []
-    result = "0x%08x" % flags
+    result = f"0x{flags:08x}"
     for i in range(32):
         flag = 1 << i
         if flags & flag:
@@ -69,7 +69,7 @@ def pretty_event_flags(flags):
     else:
         names.append(hex(flags))
     names.reverse()
-    return "%s (%s)" % (result, " | ".join(names))
+    return f"{result} ({' | '.join(names)})"
 
 
 class PyVMTraced(PyVM):

@@ -13,11 +13,7 @@ from xpython.vm import PyVMRuntimeError
 
 def version_message():
     platform = "PyPy " if IS_PYPY else "C"
-    mess = "%s running from %sPython %s" % (
-        __version__,
-        platform,
-        version_tuple_to_str(),
-    )
+    mess = f"{__version__} running from {platform}Python {version_tuple_to_str()}"
     return mess
 
 
