@@ -29,7 +29,7 @@ CodeType = type(_f.__code__)
 MappingProxyType = type(type.__dict__)
 SimpleNamespace = type(sys.implementation)
 
-if PYTHON_VERSION_TRIPLE > (3, 4):
+if PYTHON_VERSION_TRIPLE >= (3, 5):
     exec(
         """
 async def _c(): pass
