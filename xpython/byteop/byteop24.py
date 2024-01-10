@@ -23,8 +23,12 @@ if PYTHON_VERSION_TRIPLE >= (3, 0):
 else:
     import_fn = __import__
 
-from xpython.byteop.byteop import (ByteOpBase, fmt_binary_op, fmt_ternary_op,
-                                   fmt_unary_op)
+from xpython.byteop.byteop import (
+    ByteOpBase,
+    fmt_binary_op,
+    fmt_ternary_op,
+    fmt_unary_op,
+)
 from xpython.pyobj import Cell, Function, traceback_from_frame
 from xpython.vmtrace import PyVMEVENT_RETURN, PyVMEVENT_YIELD
 
@@ -49,11 +53,11 @@ def get_cell_name(vm, i):
 
 
 def fmt_store_deref(vm, int_arg, repr=repr):
-    return " (%s)" % (vm.top())
+    return f" ({vm.top()})"
 
 
 def fmt_load_deref(vm, int_arg, repr=repr):
-    return " (%s)" % (vm.frame.cells[get_cell_name(vm, int_arg)].get())
+    return f" ({vm.frame.cells[get_cell_name(vm, int_arg)].get()})"
 
 
 def fmt_call_function(vm, argc, repr=repr):
@@ -64,7 +68,7 @@ def fmt_call_function(vm, argc, repr=repr):
     code = vm.peek(name_default + pos_args + 1)
     for attr in ("co_name", "func_name", "__name__"):
         if hasattr(code, attr):
-            return " (%s)" % getattr(code, attr)
+            return f" ({getattr(code, attr)})"
 
     # Nothing found.
     return ""
@@ -77,7 +81,7 @@ def fmt_make_function(vm, arg=None, repr=repr):
     TOS = vm.top()
     for attr in ("co_name", "func_name", "__name__"):
         if hasattr(TOS, attr):
-            return " (%s)" % getattr(TOS, attr)
+            return f" ({getattr(TOS, attr)})"
 
     # Nothing found.
     return ""
@@ -98,7 +102,7 @@ class ByteOp24(ByteOpBase):
         ).split():
             self.stack_fmt[opname] = fmt_binary_op
 
-        for opname in ("ROT_THREE STORE_SUBSCR EXEC_STMT BUILD_CLASS").split():
+        for opname in "ROT_THREE STORE_SUBSCR EXEC_STMT BUILD_CLASS".split():
             self.stack_fmt[opname] = fmt_ternary_op
 
         for opname in (
@@ -120,7 +124,7 @@ class ByteOp24(ByteOpBase):
         """
         returns string of the first two elements of stack
         """
-        return " (%s)" % vm.peek(1)
+        return f" ({vm.peek(1)})"
 
     def BRKPT(self):
         """Pseudo opcode: breakpoint. We added this. TODO: call callback, then run
@@ -175,17 +179,17 @@ class ByteOp24(ByteOpBase):
     ############################################################################
 
     def NOP(self):
-        "Do nothing code. Used as a placeholder by the bytecode optimizer."
+        """Do nothing code. Used as a placeholder by the bytecode optimizer."""
         pass
 
     # Stack manipulation
 
     def POP_TOP(self):
-        "Removes the top-of-stack (TOS) item."
+        """Removes the top-of-stack (TOS) item."""
         self.vm.pop()
 
     def ROT_TWO(self):
-        "Swaps the two top-most stack items."
+        """Swaps the two top-most stack items."""
         a, b = self.vm.popn(2)
         self.vm.push(b, a)
 
@@ -423,7 +427,7 @@ class ByteOp24(ByteOpBase):
         delattr(obj, name)
 
     def STORE_GLOBAL(self, name):
-        "Works as STORE_NAME, but stores the name as a global."
+        """Works as STORE_NAME, but stores the name as a global."""
         f = self.vm.frame
         f.f_globals[name] = self.vm.pop()
 
@@ -636,7 +640,7 @@ class ByteOp24(ByteOpBase):
         elif name in f.f_builtins:
             val = f.f_builtins[name]
         else:
-            raise NameError("global name '%s' is not defined" % name)
+            raise NameError(f"global name '{name}' is not defined")
         self.vm.push(val)
 
     def SETUP_LOOP(self, jump_offset):
@@ -685,7 +689,7 @@ class ByteOp24(ByteOpBase):
             val = self.vm.frame.f_locals[name]
         else:
             raise UnboundLocalError(
-                "local variable '%s' referenced before assignment" % name
+                f"local variable '{name}' referenced before assignment"
             )
         self.vm.push(val)
 
@@ -727,7 +731,7 @@ class ByteOp24(ByteOpBase):
             """
             This opcode is obsolete.
 
-            It we last seen in Python 2.2.
+            It was last seen in Python 2.2.
             """
             self.vm.frame.f_lineno = lineno
 
@@ -792,7 +796,7 @@ class ByteOp24(ByteOpBase):
             x, y, z = self.vm.popn(3)
             self.vm.push(slice(x, y, z))
         else:  # pragma: no cover
-            raise self.vm.PyVMError("Strange BUILD_SLICE count: %r" % count)
+            raise self.vm.PyVMError(f"Strange BUILD_SLICE count: {count!r}")
 
     def RAISE_VARARGS(self, argc):
         """
@@ -804,6 +808,7 @@ class ByteOp24(ByteOpBase):
         # NOTE: the dis docs quoted above are completely wrong about the order of the
         # operands on the stack!
         tb = None
+        exctype = None
         if argc == 0:
             exctype, val, tb = self.vm.last_exception
         elif argc == 1:
@@ -812,7 +817,7 @@ class ByteOp24(ByteOpBase):
         elif argc == 2:
             val = self.vm.pop()
             # Investigate: right now we see this *only* in 2.6.
-            # Can it happen in other bytecode vesrions?
+            # Can it happen in other bytecode versions?
             if self.version_info[:2] == (2, 6):
                 val = AssertionError(val)
             exctype = self.vm.pop()

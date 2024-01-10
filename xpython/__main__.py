@@ -1,22 +1,19 @@
 """A main program for xpython."""
 
-import click
 import logging
 import sys
 
-from xpython import execfile
-from xpython.vm import PyVMRuntimeError
-from xpython.version import __version__
+import click
 from xdis.version_info import IS_PYPY, version_tuple_to_str
+
+from xpython import execfile
+from xpython.version import __version__
+from xpython.vm import PyVMRuntimeError
 
 
 def version_message():
     platform = "PyPy " if IS_PYPY else "C"
-    mess = "%s running from %sPython %s" % (
-        __version__,
-        platform,
-        version_tuple_to_str(),
-    )
+    mess = f"{__version__} running from {platform}Python {version_tuple_to_str()}"
     return mess
 
 

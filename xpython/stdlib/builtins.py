@@ -8,6 +8,7 @@ if PYTHON_VERSION_TRIPLE >= (3, 0):
     import importlib
     from builtins import input
     from functools import reduce
+
     if PYTHON_VERSION_TRIPLE >= (3, 4):
         from importlib import reload
     else:
@@ -30,8 +31,8 @@ def make_compatible_builtins(builtins: dict, target_python: tuple):
     """
     if type(target_python) is not tuple:
         target_python = (int(str(target_python)[0]), int(str(target_python)[2]))
-    short_name = "builtins_%s%s" % (target_python[0], target_python[1])
-    import_name = "xpython.stdlib.%s" % short_name
+    short_name = f"builtins_{target_python[0]}{target_python[1]}"
+    import_name = f"xpython.stdlib.{short_name}"
     try:
         module_root = import_fn(import_name)
     except Exception:
@@ -112,7 +113,8 @@ compatable_fns = {
     "cmp": cmp,  # Python 1.x-2.x
     "coerce": coerce,  # Python 1.x-2.x
     "execfile": execfile,  # Python 1.x-2.x
-    "file": open,  # Python 1.x-2.x. Do we eneed to worry about open() mode "rb", vs "rt"?
+    "file": open,  # Python 1.x-2.x. Do we eneed to worry about open() mode "rb",
+                   # vs "rt"?
     "intern": intern,  # Python 1.x-2.x
     "long": int,  # Python 1.x-2.x
     "reduce": reduce,  # Python 1.x-2.x

@@ -16,7 +16,7 @@ class ByteOp25(ByteOp24):
     # New in Python 2.5 but changes in 3.3.
     def WITH_CLEANUP(self):
         """Cleans up the stack when a "with" statement block exits. On top of
-        the stack are 1 3 values indicating how/why the finally clause
+        the stack are 1 3 values indicating how/why the "finally" clause
         was entered:
 
         * TOP = None

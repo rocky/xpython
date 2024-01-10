@@ -82,9 +82,10 @@ class ByteOp37(ByteOp36):
         are popped and the return value is pushed.
 
         rocky: In our setting, before "self" we have an additional
-        item which is the status of the LOAD_METHOD. There is no way
-        in Python to represent a value outside of a Python value which
-        you can do in C, and is in effect what NULL is.
+        item which is the status of the LOAD_METHOD. In contrast to what can
+        be done in the C implementation, there is no way
+        in Python to represent a value outside what Python offers.
+        In effect, this is what NULL in C is.
         """
         posargs = self.vm.popn(count)
         is_success = self.vm.pop()

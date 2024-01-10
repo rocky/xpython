@@ -26,7 +26,7 @@ del ByteOp24.RAISE_VARARGS
 del ByteOp24.DUP_TOPX
 
 
-def fmt_make_function(vm, arg=None, repr=repr):
+def fmt_make_function(vm, arg=None, repr_fn=repr):
     """
     returns the name of the function from the code object in the stack
     """
@@ -34,7 +34,7 @@ def fmt_make_function(vm, arg=None, repr=repr):
     fn_index = 1 if vm.version >= (3, 2) else 2
     fn_item = vm.peek(fn_index)
     name = fn_item if isinstance(fn_item, str) else fn_item.co_name
-    return " (%s)" % name
+    return f" ({name})"
 
 
 class ByteOp32(ByteOp27):
@@ -62,7 +62,7 @@ class ByteOp32(ByteOp27):
         block = self.vm.pop_block()
         if block.type != "except-handler":
             raise self.vm.PyVMError(
-                "popped block is not an except handler; is %s" % block
+                f"popped block is not an except handler; is {block}"
             )
         self.vm.unwind_block(block)
 
@@ -75,7 +75,7 @@ class ByteOp32(ByteOp27):
         """
         Creates a new function object, sets its ``__closure__`` slot, and
         pushes it on the stack. TOS is the code qualified name of the
-        function, TOS is the the code associated with the function and
+        function, TOS is the code associated with the function and
         TOS1 is the tuple containing cells for the closure's free
         variables. The function asl has ``argc`` default parameters,
         which are found below the cells.
@@ -189,7 +189,7 @@ class ByteOp32(ByteOp27):
         """Cleans up the stack when a `with` statement block exits. TOS is the
         context manager's `__exit__()` bound method.
 
-        Below TOS are 1-3 values indicating how/why the finally clause
+        Below TOS are 1-3 values indicating how/why the "finally" clause
         was entered:
 
         * SECOND = None

@@ -7,29 +7,23 @@ import sys
 
 import six
 from six.moves import reprlib
-
-from xdis import (
-    code2num,
-    CO_NEWLOCALS,
-    PYTHON3,
-    PYTHON_VERSION_TRIPLE,
-    IS_PYPY,
-    op_has_argument,
-    next_offset,
-)
+from xdis import (CO_NEWLOCALS, IS_PYPY, PYTHON3, PYTHON_VERSION_TRIPLE,
+                  code2num, next_offset, op_has_argument)
 from xdis.cross_types import UnicodeForPython3
 from xdis.op_imports import get_opcode_module
 from xdis.opcodes.opcode_311 import _nb_ops
 
-from xpython.pyobj import Frame, Block, Traceback, traceback_from_frame
 from xpython.byteop import get_byteop
+from xpython.pyobj import Block, Frame, Traceback, traceback_from_frame
 
 PY2 = not PYTHON3
 log = logging.getLogger(__name__)
 
 if PYTHON3:
+
     def byteint(b):
         return b
+
 else:
     byteint = ord
 
@@ -133,7 +127,7 @@ def format_instruction(
     )
     mess = "%s%3d: %s%s %s" % (line_str, offset, bytecode_name, stack_args, argrepr)
     if extra_debug and frame:
-        mess += " %s in %s:%s" % (code.co_name, code.co_filename, frame.f_lineno)
+        mess += f" {code.co_name} in {code.co_filename}:{frame.f_lineno}"
     return mess
 
 
@@ -384,7 +378,7 @@ class PyVM(object):
                 raise
             if self.last_traceback:
                 self.last_traceback.print_tb()
-                print("%s" % self.last_exception[0].__name__, end="")
+                print(f"{self.last_exception[0].__name__}", end="")
                 le1 = self.last_exception[1]
                 tail = ""
                 if le1:
@@ -397,7 +391,7 @@ class PyVM(object):
             if self.frames:  # pragma: no cover
                 raise PyVMError("Frames left over!")
             if self.frame and self.frame.stack:  # pragma: no cover
-                raise PyVMError("Data left on stack! %r" % self.frame.stack)
+                raise PyVMError(f"Data left on stack! {self.frame.stack!r}")
 
         return val
 
@@ -529,9 +523,9 @@ class PyVM(object):
         stack_rep = repper(self.frame.stack)
         block_stack_rep = repper(self.frame.block_stack)
 
-        log.debug("  %sframe.stack: %s" % (indent, stack_rep))
-        log.debug("  %sblocks     : %s" % (indent, block_stack_rep))
-        log.info("%s%s" % (indent, op))
+        log.debug(f"  {indent}frame.stack: {stack_rep}")
+        log.debug(f"  {indent}blocks     : {block_stack_rep}")
+        log.info(f"{indent}{op}")
 
     def dispatch(self, bytecode_name, int_arg, arguments, offset, line_number):
         """Dispatch by bytecode_name to the corresponding methods.
@@ -700,7 +694,6 @@ class PyVM(object):
         self.push_frame(frame)
         offset = 0
         while True:
-
             (
                 bytecode_name,
                 byte_code,
@@ -772,7 +765,8 @@ class PyVM(object):
             else:
                 raise PyVMError("Borked exception recording")
             # if self.exception and .... ?
-            # log.error("Haven't finished traceback handling, nulling traceback information for now")
+            # log.error("Haven't finished traceback handling, nulling traceback "
+            #            "information for now")
             # six.reraise(self.last_exception[0], None)
 
         self.in_exception_processing = False
@@ -803,7 +797,6 @@ class PyVM(object):
 
 
 if __name__ == "__main__":
-
     # Simplest of tests
     def five():
         return 5

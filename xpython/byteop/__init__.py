@@ -62,7 +62,7 @@ def get_byteop(vm, python_version, is_pypy):
 
                 byteop = ByteOp34(vm)
             else:
-                raise vm.VMEerror("Version %s not supported" % python_version)
+                raise vm.VMEerror(f"Version {python_version} not supported")
         else:
             if python_version == (3, 5):
                 if is_pypy:

@@ -121,7 +121,7 @@ class ByteOp39(ByteOp38):
         assert isinstance(destination, dict)
         dups = set(destination.keys()) & set(TOS.keys())
         if bool(dups):
-            raise RuntimeError("Duplicate keys '%s' in DICT_MERGE" % dups)
+            raise RuntimeError(f"Duplicate keys '{dups}' in DICT_MERGE")
         destination.update(TOS)
 
     def DICT_UPDATE(self, i):

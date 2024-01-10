@@ -40,7 +40,7 @@ def getargs(co, version):
     'varargs' and 'varkw' are the names of the * and ** arguments or None."""
 
     if not iscode(co):
-        raise TypeError("{!r} is not a code object".format(co))
+        raise TypeError(f"{co!r} is not a code object")
 
     nargs = co.co_argcount
     names = co.co_varnames
@@ -108,7 +108,7 @@ def getargspec(func):
     if ismethod(func):
         func = func.im_func
     if not isFunction(func):
-        raise TypeError("{!r} is not a Python function".format(func))
+        raise TypeError(f"{func!r} is not a Python function")
     args, varargs, varkw = getargs(func.func_code, func.version)
     return ArgSpec(args, varargs, varkw, func.func_defaults)
 
@@ -194,8 +194,7 @@ def getcallargs(func, *positional, **named):
         if isinstance(arg, str) and arg in named:
             if is_assigned(arg):
                 raise TypeError(
-                    "%s() got multiple values for keyword "
-                    "argument '%s'" % (f_name, arg)
+                    f"{f_name}() got multiple values for keyword argument '{arg}'"
                 )
             else:
                 assign(arg, named.pop(arg))
@@ -215,7 +214,7 @@ def getcallargs(func, *positional, **named):
             if isinstance(unexpected, unicode):
                 unexpected = unexpected.encode(sys.getdefaultencoding(), "replace")
         raise TypeError(
-            "%s() got an unexpected keyword argument '%s'" % (f_name, unexpected)
+            f"{f_name}() got an unexpected keyword argument '{unexpected}'"
         )
     unassigned = num_args - len([arg for arg in args if is_assigned(arg)])
     if unassigned:
