@@ -13,15 +13,15 @@ del ByteOp24.JUMP_IF_FALSE
 del ByteOp24.JUMP_IF_TRUE
 
 
-def fmt_set_add(vm, arg, repr=repr):
-    return " set.add(%s, %s)" % (repr(vm.peek(arg)), repr(vm.top()))
+def fmt_set_add(vm, arg, repr_fn=repr):
+    return " set.add(%s, %s)" % (repr_fn(vm.peek(arg)), repr_fn(vm.top()))
 
 
-def fmt_map_add(vm, arg, repr=repr):
+def fmt_map_add(vm, arg, repr_fn=repr):
     return " dict.setitem(%s, %s, %s)" % (
-        repr(vm.peek(arg)),
-        repr(vm.top()),
-        repr(vm.peek(2)),
+        repr_fn(vm.peek(arg)),
+        repr_fn(vm.top()),
+        repr_fn(vm.peek(2)),
     )
 
 
@@ -80,10 +80,10 @@ class ByteOp27(ByteOp26):
     # Note SET_ADD and MAP_ADD don't seem to be documented in
     # the 2.7 docs although the first appear there.
     # The docstring for these below is taken from 3.1 docs.
-    # (3.0 doesn't have have MAP, although it has SET
+    # (3.0 doesn't have MAP, although it has SET
     # which is what is below.)
 
-    # The descripitons of these is weird because values are
+    # The descriptions of these is weird because values are
     # peeked and not popped. Probably has something to do with
     # the way comprehensions work.
     def SET_ADD(self, count):
@@ -110,7 +110,7 @@ class ByteOp27(ByteOp26):
         This opcode performs several operations before a with block
         starts. First, it loads __exit__() from the context manager
         and pushes it onto the stack for later use by
-        WITH_CLEANUP. Then, __enter__() is called, and a finally block
+        WITH_CLEANUP. Then, __enter__() is called, and a "finally" block
         pointing to delta is pushed. Finally, the result of calling
         the enter method is pushed onto the stack. The next opcode
         will either ignore it (POP_TOP), or store it in (a)
@@ -119,7 +119,7 @@ class ByteOp27(ByteOp26):
         context_manager = self.vm.pop()
 
         # Make sure __enter__ and __exit__ functions in context_manager are
-        # converted to our Function type so we can interpret them.
+        # converted to our Function type, so we can interpret them.
         # Note though that built-in functions can't be traced.
         if self.version[:2] == PYTHON_VERSION_TRIPLE[:2] and not inspect.isbuiltin(
             context_manager.__exit__
@@ -168,7 +168,7 @@ class ByteOp27(ByteOp26):
     def JUMP_IF_TRUE_OR_POP(self, target):
         """
         If TOS is true, sets the bytecode counter to target and leaves TOS
-        on the stack. Otherwise (TOS is false), TOS is popped.
+        on the stack. Otherwise, (TOS is false), TOS is popped.
         """
         val = self.vm.top()
         if val:
@@ -179,7 +179,7 @@ class ByteOp27(ByteOp26):
     def JUMP_IF_FALSE_OR_POP(self, target):
         """
         If TOS is false, sets the bytecode counter to target and leaves TOS
-        on the stack. Otherwise (TOS is true), TOS is popped.
+        on the stack. Otherwise, (TOS is true), TOS is popped.
         """
         val = self.vm.top()
         if not val:

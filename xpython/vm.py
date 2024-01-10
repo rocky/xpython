@@ -23,15 +23,17 @@ from xdis.cross_types import UnicodeForPython3
 from xdis.op_imports import get_opcode_module
 from xdis.opcodes.opcode_311 import _nb_ops
 
-from xpython.pyobj import Frame, Block, Traceback, traceback_from_frame
 from xpython.byteop import get_byteop
+from xpython.pyobj import Block, Frame, Traceback, traceback_from_frame
 
 PY2 = not PYTHON3
 log = logging.getLogger(__name__)
 
 if PYTHON3:
+
     def byteint(b):
         return b
+
 else:
     byteint = ord
 
@@ -702,7 +704,6 @@ class PyVM(object):
         self.push_frame(frame)
         offset = 0
         while True:
-
             (
                 bytecode_name,
                 byte_code,
@@ -774,7 +775,8 @@ class PyVM(object):
             else:
                 raise PyVMError("Borked exception recording")
             # if self.exception and .... ?
-            # log.error("Haven't finished traceback handling, nulling traceback information for now")
+            # log.error("Haven't finished traceback handling, nulling traceback "
+            #            "information for now")
             # six.reraise(self.last_exception[0], None)
 
         self.in_exception_processing = False
@@ -805,7 +807,6 @@ class PyVM(object):
 
 
 if __name__ == "__main__":
-
     # Simplest of tests
     def five():
         return 5

@@ -26,7 +26,7 @@ del ByteOp24.RAISE_VARARGS
 del ByteOp24.DUP_TOPX
 
 
-def fmt_make_function(vm, arg=None, repr=repr):
+def fmt_make_function(vm, arg=None, repr_fn=repr):
     """
     returns the name of the function from the code object in the stack
     """
@@ -77,7 +77,7 @@ class ByteOp32(ByteOp27):
         """
         Creates a new function object, sets its ``__closure__`` slot, and
         pushes it on the stack. TOS is the code qualified name of the
-        function, TOS is the the code associated with the function and
+        function, TOS is the code associated with the function and
         TOS1 is the tuple containing cells for the closure's free
         variables. The function asl has ``argc`` default parameters,
         which are found below the cells.
@@ -191,7 +191,7 @@ class ByteOp32(ByteOp27):
         """Cleans up the stack when a `with` statement block exits. TOS is the
         context manager's `__exit__()` bound method.
 
-        Below TOS are 1-3 values indicating how/why the finally clause
+        Below TOS are 1-3 values indicating how/why the "finally" clause
         was entered:
 
         * SECOND = None
@@ -258,7 +258,3 @@ class ByteOp32(ByteOp27):
         elif argc == 1:
             exc = self.vm.pop()
         return self.do_raise(exc, cause)
-
-
-if __name__ == "__main__":
-    x = ByteOp32(None)

@@ -21,7 +21,7 @@ def parse_fn_counts_30_35(argc):
     In Python 3.3 to 3.5 MAKE_CLOSURE and MAKE_FUNCTION encode
     arguments counts of positional, default + named, and annotation
     arguments a particular kind of encoding where each of
-    the entry a a packed byted value of the lower 24 bits
+    the entry a packed byte value of the lower 24 bits
     of ``argc``.  The high bits of argc may have come from
     an EXTENDED_ARG instruction. Here, we unpack the values
     from the ``argc`` int and return a triple of the
@@ -29,11 +29,11 @@ def parse_fn_counts_30_35(argc):
     """
     annotate_count = (argc >> 16) & 0x7FFF
     # For some reason that I don't understand, annotate_args is off by one
-    # when there is an EXENDED_ARG instruction from what is documented in
+    # when there is an EXTENDED_ARG instruction from what is documented in
     # https://docs.python.org/3.4/library/dis.html#opcode-MAKE_CLOSURE
     if annotate_count > 1:
         annotate_count -= 1
-    return ((argc & 0xFF), (argc >> 8) & 0xFF, annotate_count)
+    return (argc & 0xFF), (argc >> 8) & 0xFF, annotate_count
 
 
 log = logging.getLogger(__name__)
@@ -88,7 +88,7 @@ if PYTHON_VERSION_TRIPLE >= (3, 5):
 
 
 def fmt_binary_op(vm, arg=None, repr=repr):
-    """returns a string of the repr() for each of the the first two
+    """returns a string of the repr() for each of the first two
     elements of evaluation stack
 
     """
@@ -106,10 +106,10 @@ def fmt_unary_op(vm, arg=None, repr=repr):
     """returns string of the repr() for the first element of
     the evaluation stack
     """
-    # We need to check the length because sometimes in a return event
-    # (as opposed to a
-    # a RETURN_VALUE callback can* the value has been popped, and if the
-    # return values was the only one on the stack, it will be empty here.
+    # We need to check the length because sometimes in a return event,
+    # as opposed to a RETURN_VALUE, callback can return the value has
+    # been popped, and if the return values was the only one on the
+    # stack, it will be empty here.
     if len(vm.frame.stack):
         return " (%s)" % (repr(vm.top()),)
     else:
@@ -120,7 +120,8 @@ class ByteOpBase(object):
     def __init__(self, vm):
         self.vm = vm
         # Convenience variables
-        self.version = vm.version
+        self.version = vm.version  # interpreter version
+        self.version_info = (0, 0, 0)  # this is reset in subclassing
         self.is_pypy = vm.is_pypy
         self.PyVMError = self.vm.PyVMError
 
@@ -274,10 +275,6 @@ class ByteOpBase(object):
                         self.cross_bytecode_eval_warning_shown = True
 
             elif PYTHON_VERSION_TRIPLE >= (3, 0) and func == __build_class__:
-                assert (
-                    len(pos_args) > 0
-                ), ("__build_class__() should have at least one argument, an "
-                    "__init__() function.")
                 init_fn = pos_args[0]
                 if (
                     isinstance(init_fn, Function)
@@ -310,7 +307,7 @@ class ByteOpBase(object):
             inspect.isfunction(func)
             and self.version_info[:2] == PYTHON_VERSION_TRIPLE[:2]
         ):
-            # Try to convert to an interpreter function so we can interpret it.
+            # Try to convert to an interpreter function, so we can interpret it.
             if func in self.vm.fn2native:
                 func = self.vm.fn2native[func]
             elif False:  # self.vm.version < (3, 0):

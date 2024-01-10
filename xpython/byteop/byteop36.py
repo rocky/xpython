@@ -1,4 +1,4 @@
-# Copyright (C) 2021 Rocky Bernstein
+# Copyright (C) 2021, 2023, 2024 Rocky Bernstein
 # This program comes with ABSOLUTELY NO WARRANTY.
 # This is free software, and you are welcome to redistribute it
 # under certain conditions.
@@ -18,7 +18,7 @@ del ByteOp24.MAKE_CLOSURE
 del ByteOp24.CALL_FUNCTION_VAR
 
 # Even though Python 3.6 loses CALL_FUNCTION_VAR_KW, PyPy retains this for 3.6.
-# It is gone though in 3.7. So we will keep this around for one more version than
+# However, it is gone in 3.7. So we will keep this around for one more version than
 # would be needed if we were doing strictly CPython 3.6
 # del ByteOp24.CALL_FUNCTION_VAR_KW
 
@@ -214,7 +214,7 @@ class ByteOp36(ByteOp35):
 
     # New in 3.6...
 
-    # .. and this one is gone in 3.8
+    # ... and this one is gone in 3.8
     def STORE_ANNOTATION(self, name):
         """
         Stores TOS as locals()['__annotations__'][co_names[namei]] = TOS.

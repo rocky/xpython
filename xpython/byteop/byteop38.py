@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2021 Rocky Bernstein
+# Copyright (C) 2021, 2023-2024 Rocky Bernstein
 # This program comes with ABSOLUTELY NO WARRANTY.
 # This is free software, and you are welcome to redistribute it
 # under certain conditions.
@@ -43,20 +43,20 @@ class ByteOp38(ByteOp37):
     def BEGIN_FINALLY(self):
         """Pushes NULL onto the stack for using it in END_FINALLY,
         POP_FINALLY, WITH_CLEANUP_START and
-        WITH_CLEANUP_FINISH. Starts the finally block."""
+        WITH_CLEANUP_FINISH. Starts the "finally" block."""
         self.vm.push(None)
 
     def END_ASYNC_FOR(self):
         """Terminates an `async for1 loop. Handles an exception raised when
         awaiting a next item. If TOS is StopAsyncIteration pop 7 values from
         the stack and restore the exception state using the second three of
-        them. Otherwise re-raise the exception using the three values from the
+        them. Otherwise, re-raise the exception using the three values from the
         stack. An exception handler block is removed from the block stack."""
 
         raise self.vm.PyVMError("END_ASYNC_FOR not implemented yet")
 
     def END_FINALLY(self):
-        """Terminates a finally clause. The interpreter recalls whether the
+        """Terminates a "finally" clause. The interpreter recalls whether the
         exception has to be re-raised or execution has to be continued
         depending on the value of TOS.
 
@@ -96,13 +96,13 @@ class ByteOp38(ByteOp37):
     def CALL_FINALLY(self, delta):
         """Pushes the address of the next instruction onto the stack and
         increments bytecode counter by delta. Used for calling the
-        finally block as a "subroutine".
+        "finally" block as a "subroutine".
         """
         # Is it f_lasti or the one after that
         self.vm.push(self.vm.frame.f_lasti)
         self.vm.jump(delta)
 
-    def POP_FINALLY(self, preserve_tos: int):
+    def POP_FINALLY(self, preserve_tos):
         """Cleans up the value stack and the block stack. If preserve_tos is
         not 0 TOS first is popped from the stack and pushed on the stack after
         performing other stack operations:
@@ -114,9 +114,9 @@ class ByteOp38(ByteOp37):
           stack, the last three popped values are used to restore the exception state.
           An exception handler block is removed from the block stack.
 
-        It is similar to END_FINALLY, but doesn’t change the bytecode
+        It is similar to END_FINALLY, but does npt change the bytecode
         counter nor raise an exception. Used for implementing break,
-        continue and return in the finally block.
+        continue and return in the "finally" block.
 
         """
         v = self.vm.pop()

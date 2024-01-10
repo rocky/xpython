@@ -10,7 +10,7 @@ del ByteOp24.STORE_MAP
 del ByteOp32.WITH_CLEANUP
 
 
-def fmt_build_map_unpack_with_call(vm, arg, repr=repr):
+def fmt_build_map_unpack_with_call(vm, arg, repr_fn=repr):
     """returns string of the repr() for the first element of
     the evaluation stack
     """
@@ -137,7 +137,7 @@ class ByteOp35(ByteOp34):
         """Cleans up the stack when a with statement block exits.
 
         TOS is the context manager s __exit__() bound method. Below
-        TOS are 1 - 3 values indicating how/why the finally clause was
+        TOS are 1 - 3 values indicating how/why the "finally" clause was
         entered:
 
         * SECOND = None

@@ -7,6 +7,7 @@ import linecache
 import types
 from copy import copy
 from sys import stderr
+
 from xdis import CO_GENERATOR, CO_ITERABLE_COROUTINE, iscode
 from xdis.version_info import PYTHON3, PYTHON_VERSION_TRIPLE
 
@@ -18,10 +19,10 @@ else:
         pass
 
 
-import xpython.stdlib.inspect3 as inspect3
-import xpython.stdlib.inspect2 as inspect2
-
 import six
+
+import xpython.stdlib.inspect2 as inspect2
+import xpython.stdlib.inspect3 as inspect3
 
 PY2 = not PYTHON3
 
@@ -39,7 +40,7 @@ def make_cell(value):
 
 # It might be the case that this is more useful in Python 2.x
 # which doesn't seem to show traceback of interpreted code.
-# Python 3.x does this but it also shows junk at the end.
+# Python 3.x does this, but it also shows junk at the end.
 Traceback = collections.namedtuple("_Traceback", "tb_frame tb_lasti tb_lineno tb_next")
 try:
     Traceback.tb_frame.__doc__ = "frame object at this level"
@@ -199,6 +200,7 @@ class Function:
             kw = {"argdefs": self.func_defaults}
         else:
             kw = {}
+
         if closure:
             kw["closure"] = tuple(make_cell(0) for _ in closure)
 
@@ -366,7 +368,7 @@ class Block(object):
 
     The equivalent of CPython's PyFrame_BlockSetup()
 
-    The are used in "try" and "with" statements; before Python 3.8 also in opcodes
+    They are used in "try" and "with" statements; before Python 3.8 also in opcodes
     associated with `for` (`SETUP_LOOP`) and `except` (`SETUP_EXCEPT`).
 
     From Python Include/frameobject.h:

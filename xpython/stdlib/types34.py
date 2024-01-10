@@ -3,7 +3,6 @@
 """
 Define names for built-in types that aren't directly accessible as a builtin.
 """
-import collections.abc as _collections_abc
 import functools as _functools
 import sys
 from types import GeneratorType
@@ -12,6 +11,10 @@ from xdis.util import CO_COROUTINE, CO_GENERATOR, CO_ITERABLE_COROUTINE
 from xdis.version_info import PYTHON_VERSION_TRIPLE
 
 from xpython.stdlib.inspect3 import isfunction, isgeneratorfunction, xCallable
+
+if PYTHON_VERSION_TRIPLE >= (3, 0):
+    import collections.abc as _collections_abc
+
 
 # Iterators in Python aren't a matter of type but of protocol.  A large
 # and changing number of builtin types implement *some* flavor of
@@ -27,9 +30,11 @@ FunctionType = type(_f)
 LambdaType = type(lambda: None)  # Same as FunctionType
 CodeType = type(_f.__code__)
 MappingProxyType = type(type.__dict__)
-SimpleNamespace = type(sys.implementation)
 
-if PYTHON_VERSION_TRIPLE > (3, 4):
+if PYTHON_VERSION_TRIPLE >= (3, 0):
+    SimpleNamespace = type(sys.implementation)
+
+if PYTHON_VERSION_TRIPLE >= (3, 5):
     exec(
         """
 async def _c(): pass
@@ -252,7 +257,6 @@ def coroutine(func):
         raise TypeError("types.coroutine() expects a callable")
 
     if isfunction(func) and getattr(func, "__code__", None).__class__ is CodeType:
-
         co_flags = func.__code__.co_flags
 
         # Check if 'func' is a coroutine function.
@@ -296,16 +300,18 @@ def coroutine(func):
         ):
             # 'coro' is a native coroutine object or an iterable coroutine
             return coro
-        if isinstance(coro, _collections_abc.Generator) and not isinstance(
-            coro, _collections_abc.Coroutine
-        ):
-            # 'coro' is either a pure Python generator iterator, or it
-            # implements collections.abc.Generator (and does not implement
-            # collections.abc.Coroutine).
-            return _GeneratorWrapper(coro)
-        # 'coro' is either an instance of collections.abc.Coroutine or
-        # some other object -- pass it through.
-        return coro
+
+        if PYTHON_VERSION_TRIPLE >= (3, 0):
+            if isinstance(coro, _collections_abc.Generator) and not isinstance(
+                coro, _collections_abc.Coroutine
+            ):
+                # 'coro' is either a pure Python generator iterator, or it
+                # implements collections.abc.Generator (and does not implement
+                # collections.abc.Coroutine).
+                return _GeneratorWrapper(coro)
+            # 'coro' is either an instance of collections.abc.Coroutine or
+            # some other object -- pass it through.
+            return coro
 
     return wrapped
 

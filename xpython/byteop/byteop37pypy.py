@@ -1,4 +1,4 @@
-# Copyright (C) 2021 Rocky Bernstein
+# Copyright (C) 2021, 2023-2024 Rocky Bernstein
 # This program comes with ABSOLUTELY NO WARRANTY.
 # This is free software, and you are welcome to redistribute it
 # under certain conditions.
@@ -9,17 +9,17 @@ from xpython.byteop.byteop37 import ByteOp37
 from xpython.byteop.byteoppypy import ByteOpPyPy
 
 
-def fmt_call_method(vm, argc: int, repr=repr) -> str:
+def fmt_call_method(vm, argc: int, repr_fn=repr) -> str:
     """
     formats function name (without enclosing object), and positional args.
     """
     pos_args = [vm.peek(i + 1) for i in range(argc)]
 
     fn_name = vm.peek(argc + 2).__name__
-    return f""" {fn_name}({", ".join((repr(a) for a in pos_args))})"""
+    return ' %s(%s)' % (fn_name, ", ".join((repr_fn(a) for a in pos_args)))
 
 
-def fmt_call_method_kw(vm, argc: int, repr=repr) -> str:
+def fmt_call_method_kw(vm, argc: int, repr_fn=repr) -> str:
     """
     formats function name (without enclosing object), positional  and keyword args.
     """
@@ -27,7 +27,7 @@ def fmt_call_method_kw(vm, argc: int, repr=repr) -> str:
     kwargs_count = len(kwarg_names)
     kwargs_list = []
     for i in range(kwargs_count):
-        kwargs_list.append(f"{kwarg_names[i]}={vm.peek(i+1)}")
+        kwargs_list.append("%s=%s" % (kwarg_names[i], vm.peek(i+1)))
 
     pos_args = []
     j = kwargs_count + 2
@@ -35,7 +35,7 @@ def fmt_call_method_kw(vm, argc: int, repr=repr) -> str:
         pos_args.append(vm.peek(i + j))
 
     fn_name = vm.peek(argc + 3).__name__
-    return f""" {fn_name}({", ".join((repr(a) for a in pos_args + kwargs_list))})"""
+    return ' %s(%s)' % (fn_name, ", ".join((repr_fn(a) for a in pos_args + kwargs_list)))
 
 
 class ByteOp37PyPy(ByteOp37, ByteOpPyPy):
@@ -52,7 +52,7 @@ class ByteOp37PyPy(ByteOp37, ByteOpPyPy):
         """
         argc has a count of the number of keyword parameters.
         TOS has a tuple of keyword parameter names. Below that are the
-        keyword values. After that is the a cached method which in our
+        keyword values. After that is the cached method which in our
         case is garbage. After that is the method to call.
         """
 
