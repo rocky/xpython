@@ -98,20 +98,19 @@ class ByteOp33(ByteOp32):
         else:
             kwdefaults = {}
 
+        if annotate_count:
+            annotate_names = self.vm.pop()
+            annotate_objects = self.vm.popn(annotate_count)
+            n = len(annotate_objects)
+            assert n == len(annotate_names)
+            annotations = {annotate_names[i]: annotate_objects[i] for i in range(n)}
+        else:
+            annotations = {}
+
         if default_count:
             defaults = self.vm.popn(default_count)
         else:
             defaults = tuple()
-
-        if annotate_count:
-            annotate_names = self.vm.pop()
-            # annotate count includes +1 for the above names
-            annotate_objects = self.vm.popn(annotate_count - 1)
-            n = len(annotate_names)
-            assert n == len(annotate_objects)
-            annotations = {annotate_names[i]: annotate_objects[i] for i in range(n)}
-        else:
-            annotations = {}
 
         # FIXME: DRY with code in byteop3{2,6}.py
 
