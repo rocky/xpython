@@ -13,7 +13,7 @@ echo Testing Python $PYTHON_VERSION
 
 bytecode_dir="bytecode-${PYTHON_VERSION}"
 for file in ${bytecode_dir}/*.pyc ; do
-    (( $VERBOSE )) && echo $file
+    (( $VERBOSE != 0)) && echo $file
     if ! xpython ${XPYTHON_OPTS} $file ; then
 	echo "$file broken"
 	break

@@ -1,24 +1,26 @@
 # Compatibility for us old-timers.
 
-.PHONY: all check check-nosetests check-version-bytecode
+.PHONY: all check check-all-bytecode check-version-bytecode
 
 PYTHON ?= python
 PYTHON3 ?= python3
 RM      ?= rm
 LINT    = flake8
 SHELL   ?= bash
-SKIP_COMPAT ?= 1
+VERBOSE ?= 1
 o       ?= ""
 
-#: Default target - same as "check"
-all: check check-version-bytecode
+#: Default target - run medium set of tests
+all check: check-pytest check-version-bytecode
 
-check: check-nosetests check-version-bytecode
+#: Run pytest tests
+check-pytest:
+	$(PYTHON) -V && $(PYTHON) -m pytest test_*.py
 
-#: Run all tests, excluding those that need pyenv
-check-nosetests:
-	$(PYTHON) -V && SKIP_COMPAT=$(SKIP_COMPAT) nosetests --stop $(o)
-
-#: Run all tests, excluding those that need pyenv
+#: Run tests for this version of Python
 check-version-bytecode:
-	$(BASH) ./test-single-version.sh
+	VERBOSE=$(VERBOSE) $(BASH) ./test-single-version.sh
+
+#: Run all tests over all Python versions for this branch using pyenv
+check-all-bytecode:
+	VERBOSE=$(VERBOSE) $(BASH) ./test-all-bytecode.sh
