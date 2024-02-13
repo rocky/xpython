@@ -1,4 +1,13 @@
 #!/usr/bin/env python
+"""
+Force byte-compilation.
+
+Note: we use an older style of Python, e.g. no f-strings, so this can be used from a
+newer branch like "master" but can byte-compile older Pythons using an older
+Python version in that branch.
+"""
+import py_compile
+
 import sys
 import os.path as osp
 from xdis.version_info import IS_PYPY, PYTHON_VERSION_TRIPLE, version_tuple_to_str
@@ -33,17 +42,19 @@ if IS_PYPY:
     platform = "pypy"
     bytecode_path = osp.normpath(
         osp.join(
-            get_srcdir(), f"bytecode-pypy{version}", f"{basename}.pypy{version}.pyc"
+            get_srcdir(),
+            "bytecode-pypy%s" % version,
+            "%s.pypy%s.pyc" % (basename, version),
         )
     )
 else:
     platform = ""
     version = version_tuple_to_str(end=2)
     bytecode_path = osp.normpath(
-        osp.join(get_srcdir(), f"bytecode-{platform}{version}", f"{basename}.pyc")
+        osp.join(
+            get_srcdir(), "bytecode-%s%s" % (platform, version), "%s.pyc" % basename
+        )
     )
-
-import py_compile
 
 print("compiling %s to %s" % (source, bytecode_path))
 py_compile.compile(source, bytecode_path, source)

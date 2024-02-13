@@ -6,6 +6,7 @@ import logging
 import sys
 
 import six
+from typing import List
 from six.moves import reprlib
 from xdis import (CO_NEWLOCALS, IS_PYPY, PYTHON3, PYTHON_VERSION_TRIPLE,
                   code2num, next_offset, op_has_argument)
@@ -140,7 +141,7 @@ class PyVM(object):
         format_instruction_func=format_instruction,
     ):
         # The call stack of frames.
-        self.frames = []
+        self.frames: List[Frame] = []
         # The current frame.
         self.frame = None
         self.return_value = None
@@ -150,6 +151,8 @@ class PyVM(object):
         self.version = python_version
         self.is_pypy = is_pypy
         self.format_instruction = format_instruction_func
+
+        self.null_ops = []
 
         # FIXME: until we figure out how to fix up test/vmtest.el
         # This changes how we report a VMRuntime error.

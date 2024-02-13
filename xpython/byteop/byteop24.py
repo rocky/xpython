@@ -9,7 +9,6 @@ import operator
 import sys
 from collections import namedtuple
 
-import six
 from xdis.version_info import PYTHON_VERSION_TRIPLE
 
 # FIXME: we should use:
@@ -324,7 +323,7 @@ class ByteOp24(ByteOpBase):
             globs = self.vm.frame.f_globals
         if locs is None:
             locs = self.vm.frame.f_locals
-        six.exec_(stmt, globs, locs)
+        exec(stmt, globs, locs)
 
     def POP_BLOCK(self):
         """
