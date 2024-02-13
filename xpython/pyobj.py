@@ -489,12 +489,13 @@ class Frame(object):
         """Get the current line number the frame is executing."""
         # We don't keep f_lineno up to date, so calculate it based on the
         # instruction address and the line number table.
-        line_number = 0
+        last_line_number = 0
         for offset, line_number in self.line_starts:
             if offset > self.f_lasti:
                 break
+            last_line_number = line_number
 
-        return line_number
+        return last_line_number
 
 
 class Traceback(object):
