@@ -5,7 +5,7 @@
 set -e
 
 PYTHON=${PYTHON:-python}
-PYTHON_VERSION=`python -V 2>&1 | cut -d ' ' -f 2 | cut -d'.' -f1,2`
+PYTHON_VERSION=${1:-$(python -V 2>&1 | cut -d ' ' -f 2 | cut -d'.' -f1,2)}
 VERBOSE=${VERBOSE:-0}
 XPYTHON_OPTS=${XPYTHON_OPTS:-""}
 

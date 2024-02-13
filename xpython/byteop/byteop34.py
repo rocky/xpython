@@ -4,6 +4,7 @@
 import inspect
 import types
 
+from xdis.opcodes.opcode_3x import parse_fn_counts_30_35
 from xdis.version_info import IS_PYPY, PYTHON_VERSION_TRIPLE
 
 from xpython.byteop.byteop24 import Version_info
@@ -57,13 +58,12 @@ class ByteOp34(ByteOp33):
           below the object on the stack, for keyword-only parameters
         * (argc >> 16) & 0x7FFF parameter annotation objects
         * a tuple listing the parameter names for the annotations (only if there are
-           only annotation objects)
+          only annotation objects)
         * the code associated with the function (at TOS1)
         * the qualified name of the function (at TOS)
         """
 
-        rest, default_count = divmod(argc, 256)
-        annotate_count, kw_default_count = divmod(rest, 256)
+        default_count, kw_default_count, annotate_count = parse_fn_counts_30_35(argc)
 
         name = self.vm.pop()
         code = self.vm.pop()
