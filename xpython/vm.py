@@ -6,7 +6,6 @@ import logging
 import sys
 
 import six
-from typing import List
 from six.moves import reprlib
 from xdis import (CO_NEWLOCALS, IS_PYPY, PYTHON3, PYTHON_VERSION_TRIPLE,
                   code2num, next_offset, op_has_argument)
@@ -141,7 +140,7 @@ class PyVM(object):
         format_instruction_func=format_instruction,
     ):
         # The call stack of frames.
-        self.frames: List[Frame] = []
+        self.frames = []
         # The current frame.
         self.frame = None
         self.return_value = None
