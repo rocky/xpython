@@ -13,5 +13,5 @@ fulldir=$(readlink -f $mydir)
 cd $fulldir/..
 (cd ../python-xdis/admin-tools && . ./setup-python-2.4.sh && git pull)
 git checkout python-2.4-to-2.7
-cd $owd
 rm -v */.python-version >/dev/null 2>&1 || true
+cd $owd
