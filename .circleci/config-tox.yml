@@ -1,0 +1,15 @@
+version: 2
+
+jobs:
+
+  # using tox
+  toxifiy:
+    docker:
+      - image: python:3.3
+
+    steps:
+      - checkout
+      - run pip install tox && tox
+
+workflows:
+  version: 2

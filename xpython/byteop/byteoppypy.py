@@ -19,9 +19,22 @@ class ByteOpPyPy(object):
         """
         self.vm.jump(jump_offset)
 
-    # For Python 3.7 this is not correct
+    # For Python 3.7+ this is not correct
     def LOOKUP_METHOD(self, name):
-        """
+        """From
+        https://doc.pypy.org/en/latest/interpreter-optimizations.html#lookup-method-call-method
+        LOOKUP_METHOD contains exactly the same attribute lookup logic
+        as LOAD_ATTR - thus fully preserving semantics - but pushes
+        two values onto the stack instead of one. These two values are
+        an “inlined” version of the bound method object: the im_func
+        and im_self, i.e. respectively the underlying Python function
+        object and a reference to obj. This is only possible when the
+        attribute actually refers to a function object from the class;
+        when this is not the case, LOOKUP_METHOD still pushes two
+        values, but one (im_func) is simply the regular result that
+        LOAD_ATTR would have returned, and the other (im_self) is an
+        interpreter-level None placeholder.
+
         For now, we'll assume this is the same as LOAD_ATTR:
 
         Replaces TOS with getattr(TOS, co_names[namei]).
