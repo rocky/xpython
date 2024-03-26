@@ -1,17 +1,16 @@
 """Testing tools for x-python."""
 
-from xdis import load_module
-import os.path as osp
 import inspect
+import os.path as osp
 import sys
 import textwrap
 import unittest
+from io import StringIO
 
-import six
+from xdis import load_module
+from xdis.version_info import IS_PYPY, PYTHON_VERSION_TRIPLE, version_tuple_to_str
 
 from xpython.vm import PyVM, PyVMError
-
-from xdis.version_info import PYTHON_VERSION_TRIPLE, IS_PYPY, version_tuple_to_str
 
 # Make this false if you need to run the debugger inside a test.
 CAPTURE_STDOUT = "-s" not in sys.argv
@@ -37,8 +36,19 @@ def parent_function_name():
 LINE_STR = "-" * 25
 
 supported_versions = frozenset(
-    [(2, 7), (3, 2), (3, 3), (3, 4), (3, 5), (3, 6), (3, 7), (3, 8), (3, 9), (3, 10),
-     (3, 11)]
+    [
+        (2, 7),
+        (3, 2),
+        (3, 3),
+        (3, 4),
+        (3, 5),
+        (3, 6),
+        (3, 7),
+        (3, 8),
+        (3, 9),
+        (3, 10),
+        (3, 11),
+    ]
 )
 
 
@@ -103,7 +113,7 @@ class VmTestCase(unittest.TestCase):
 
         # Run the code through our VM.
 
-        vm_stdout = six.StringIO()
+        vm_stdout = StringIO()
         if CAPTURE_STDOUT:  # pragma: no branch
             sys.stdout = vm_stdout
         vm = PyVM(vmtest_testing=True)
@@ -133,7 +143,7 @@ class VmTestCase(unittest.TestCase):
         if self.version_pair != PYTHON_VERSION_TRIPLE[:2]:
             return
 
-        py_stdout = six.StringIO()
+        py_stdout = StringIO()
         sys.stdout = py_stdout
 
         py_value = py_exc = None

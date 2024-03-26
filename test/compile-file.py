@@ -1,4 +1,13 @@
 #!/usr/bin/env python
+"""
+Force byte-compilation.
+
+Note: we use an older style of Python, e.g. no f-strings, so this can be used from a
+newer branch like "master" but can byte-compile older Pythons using an older
+Python version in that branch.
+"""
+import py_compile
+
 import os.path as osp
 import sys
 
@@ -47,8 +56,6 @@ else:
             get_srcdir(), "bytecode-%s%s" % (platform, version), "%s.pyc" % basename
         )
     )
-
-import py_compile
 
 print("compiling %s to %s" % (source, bytecode_path))
 py_compile.compile(source, bytecode_path, source)

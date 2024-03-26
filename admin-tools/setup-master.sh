@@ -18,13 +18,6 @@ function checkout_version {
     return $?
 }
 
-# FIXME put some of the below in a common routine
-function finish {
-  cd $owd
-}
-owd=$(pwd)
-trap finish EXIT
-
 export PATH=$HOME/.pyenv/bin/pyenv:$PATH
 
 mydir=$(dirname $bs)
@@ -32,4 +25,4 @@ fulldir=$(readlink -f $mydir)
 (cd $fulldir/.. && checkout_version python-xdis && checkout_version x-python)
 
 rm -v */.python-version >/dev/null 2>&1 || true
-finish
+cd $owd
