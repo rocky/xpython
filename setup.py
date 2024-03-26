@@ -2,4 +2,32 @@
 
 from distutils.core import setup
 
-setup(packages=["xpython"])
+from setuptools import find_packages
+from __pkginfo__ import (
+    __version__,
+    author,
+    author_email,
+    classifiers,
+    entry_points,
+    install_requires,
+    long_description,
+    py_modules,
+    short_desc,
+    url,
+)
+
+setup(
+    name="x-python",
+    version=__version__,
+    author=author,
+    author_email=author_email,
+    classifiers=classifiers,
+    description=short_desc,
+    entry_points=entry_points,
+    long_description=long_description,
+    long_description_content_type="text/x-rst",
+    packages=find_packages(),
+    py_modules=py_modules,
+    install_requires=install_requires,
+    url=url,
+)
