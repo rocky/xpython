@@ -493,7 +493,7 @@ class Frame(object):
             self.f_lasti,
         )
 
-    def line_number(self) -> int:
+    def line_number(self):
         """Get the current line number the frame is executing."""
         # We don't keep f_lineno up to date, so calculate it based on the
         # instruction address and the line number table.

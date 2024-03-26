@@ -6,7 +6,7 @@ import inspect
 
 
 class ByteOpPyPy(object):
-    def BUILD_LIST_FROM_ARG(self, count: int):
+    def BUILD_LIST_FROM_ARG(self, count):
         """Builds a list containing TOS.
         Is equivalint to BUILD_LIST(0) followed by ROT_TWO
         """

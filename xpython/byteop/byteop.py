@@ -68,7 +68,7 @@ if PYTHON_VERSION_TRIPLE >= (3, 5):
     BINARY_OPERATORS["MATRIX_MULTIPLY"] = operator.matmul
 
 
-def fmt_binary_op(vm: PyVM, arg=None, repr=repr):
+def fmt_binary_op(vm, arg=None, repr=repr):
     """returns a string of the repr() for each of the first two
     elements of evaluation stack
 
@@ -76,14 +76,14 @@ def fmt_binary_op(vm: PyVM, arg=None, repr=repr):
     return " (%s, %s)" % (repr(vm.peek(2)), repr(vm.top()))
 
 
-def fmt_ternary_op(vm: PyVM, arg=None, repr=repr):
+def fmt_ternary_op(vm, arg=None, repr=repr):
     """returns string of the repr() for each of the first three
     elements of evaluation stack
     """
     return " (%s, %s, %s)" % (repr(vm.peek(3)), repr(vm.peek(2)), repr(vm.top()))
 
 
-def fmt_unary_op(vm: PyVM, arg=None, repr=repr):
+def fmt_unary_op(vm, arg=None, repr=repr):
     """returns string of the repr() for the first element of
     the evaluation stack
     """

@@ -9,7 +9,7 @@ from xpython.byteop.byteop37 import ByteOp37
 from xpython.byteop.byteoppypy import ByteOpPyPy
 
 
-def fmt_call_method(vm, argc: int, repr_fn=repr) -> str:
+def fmt_call_method(vm, argc, repr_fn=repr):
     """
     formats function name (without enclosing object), and positional args.
     """
@@ -19,7 +19,7 @@ def fmt_call_method(vm, argc: int, repr_fn=repr) -> str:
     return ' %s(%s)' % (fn_name, ", ".join((repr_fn(a) for a in pos_args)))
 
 
-def fmt_call_method_kw(vm, argc: int, repr_fn=repr) -> str:
+def fmt_call_method_kw(vm, argc, repr_fn=repr):
     """
     formats function name (without enclosing object), positional  and keyword args.
     """

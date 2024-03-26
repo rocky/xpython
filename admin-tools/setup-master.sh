@@ -7,7 +7,6 @@ if [[ $0 == $bs ]] ; then
     echo "This script should be *sourced* rather than run directly through bash"
     exit 1
 fi
->>>>>>> python-3.1-to-3.2
 
 function checkout_version {
     local repo=$1

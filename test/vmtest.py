@@ -49,7 +49,6 @@ supported_versions = frozenset(
         (3, 10),
         (3, 11),
     ]
->>>>>>> python-3.1-to-3.2
 )
 
 
