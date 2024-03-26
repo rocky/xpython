@@ -9,31 +9,12 @@ import inspect
 import logging
 import operator
 import sys
+
 from xdis.version_info import PYTHON_VERSION_TRIPLE, version_tuple_to_str
 
 from xpython.builtins import build_class, builtin_super
 from xpython.pyobj import Function
-
-
-# FIXME: in the future we can get this from xdis
-def parse_fn_counts_30_35(argc):
-    """
-    In Python 3.3 to 3.5 MAKE_CLOSURE and MAKE_FUNCTION encode
-    arguments counts of positional, default + named, and annotation
-    arguments a particular kind of encoding where each of
-    the entry a packed byte value of the lower 24 bits
-    of ``argc``.  The high bits of argc may have come from
-    an EXTENDED_ARG instruction. Here, we unpack the values
-    from the ``argc`` int and return a triple of the
-    positional args, named_args, and annotation args.
-    """
-    annotate_count = (argc >> 16) & 0x7FFF
-    # For some reason that I don't understand, annotate_args is off by one
-    # when there is an EXTENDED_ARG instruction from what is documented in
-    # https://docs.python.org/3.4/library/dis.html#opcode-MAKE_CLOSURE
-    if annotate_count > 1:
-        annotate_count -= 1
-    return (argc & 0xFF), (argc >> 8) & 0xFF, annotate_count
+from xpython.vm import PyVM
 
 
 log = logging.getLogger(__name__)
@@ -87,7 +68,7 @@ if PYTHON_VERSION_TRIPLE >= (3, 5):
     BINARY_OPERATORS["MATRIX_MULTIPLY"] = operator.matmul
 
 
-def fmt_binary_op(vm, arg=None, repr=repr):
+def fmt_binary_op(vm: PyVM, arg=None, repr=repr):
     """returns a string of the repr() for each of the first two
     elements of evaluation stack
 
@@ -95,14 +76,14 @@ def fmt_binary_op(vm, arg=None, repr=repr):
     return " (%s, %s)" % (repr(vm.peek(2)), repr(vm.top()))
 
 
-def fmt_ternary_op(vm, arg=None, repr=repr):
+def fmt_ternary_op(vm: PyVM, arg=None, repr=repr):
     """returns string of the repr() for each of the first three
     elements of evaluation stack
     """
     return " (%s, %s, %s)" % (repr(vm.peek(3)), repr(vm.peek(2)), repr(vm.top()))
 
 
-def fmt_unary_op(vm, arg=None, repr=repr):
+def fmt_unary_op(vm: PyVM, arg=None, repr=repr):
     """returns string of the repr() for the first element of
     the evaluation stack
     """
@@ -275,6 +256,10 @@ class ByteOpBase(object):
                         self.cross_bytecode_eval_warning_shown = True
 
             elif PYTHON_VERSION_TRIPLE >= (3, 0) and func == __build_class__:
+                assert len(pos_args) > 0, (
+                    "__build_class__() should have at least one argument, an "
+                    "__init__() function."
+                )
                 init_fn = pos_args[0]
                 if (
                     isinstance(init_fn, Function)

@@ -31,9 +31,6 @@ LambdaType = type(lambda: None)  # Same as FunctionType
 CodeType = type(_f.__code__)
 MappingProxyType = type(type.__dict__)
 
-if PYTHON_VERSION_TRIPLE >= (3, 0):
-    SimpleNamespace = type(sys.implementation)
-
 if PYTHON_VERSION_TRIPLE >= (3, 5):
     exec(
         """

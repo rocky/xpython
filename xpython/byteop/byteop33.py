@@ -2,7 +2,7 @@
 """Byte Interpreter operations for Python 3.3
 """
 
-from xpython.byteop.byteop import parse_fn_counts_30_35
+from xdis.opcodes.opcode_3x import parse_fn_counts_30_35
 from xpython.byteop.byteop24 import Version_info
 from xpython.byteop.byteop32 import ByteOp32
 from xpython.pyobj import Function, Generator
@@ -20,7 +20,7 @@ class ByteOp33(ByteOp32):
         pushes it on the stack. TOS is the code qualified name of the
         function, TOS is the code associated with the function and
         TOS1 is the tuple containing cells for the closure's free
-        variables. The function asl has ``argc`` default parameters,
+        variables. The function also has ``argc`` default parameters,
         which are found below the cells.
         """
         default_count, kw_default_count, annotate_count = parse_fn_counts_30_35(argc)
@@ -97,20 +97,19 @@ class ByteOp33(ByteOp32):
         else:
             kwdefaults = {}
 
+        if annotate_count:
+            annotate_names = self.vm.pop()
+            annotate_objects = self.vm.popn(annotate_count)
+            n = len(annotate_objects)
+            assert n == len(annotate_names)
+            annotations = {annotate_names[i]: annotate_objects[i] for i in range(n)}
+        else:
+            annotations = {}
+
         if default_count:
             defaults = self.vm.popn(default_count)
         else:
             defaults = tuple()
-
-        if annotate_count:
-            annotate_names = self.vm.pop()
-            # annotate count includes +1 for the above names
-            annotate_objects = self.vm.popn(annotate_count - 1)
-            n = len(annotate_names)
-            assert n == len(annotate_objects)
-            annotations = {annotate_names[i]: annotate_objects[i] for i in range(n)}
-        else:
-            annotations = {}
 
         # FIXME: DRY with code in byteop3{2,6}.py
 

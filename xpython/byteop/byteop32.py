@@ -4,7 +4,7 @@
 
 import inspect
 
-from xpython.byteop.byteop import parse_fn_counts_30_35
+from xdis.opcodes.opcode_3x import parse_fn_counts_30_35
 from xpython.byteop.byteop24 import ByteOp24, Version_info
 from xpython.byteop.byteop27 import ByteOp27
 from xpython.pyobj import Function

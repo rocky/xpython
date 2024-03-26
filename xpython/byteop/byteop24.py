@@ -320,7 +320,7 @@ class ByteOp24(ByteOpBase):
             globs = self.vm.frame.f_globals
         if locs is None:
             locs = self.vm.frame.f_locals
-        six.exec_(stmt, globs, locs)
+        exec(stmt, globs, locs)
 
     def POP_BLOCK(self):
         """

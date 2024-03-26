@@ -132,7 +132,7 @@ class PyVMTraced(PyVM):
         code.co_code = bytes(bytecode)
 
     # FIXME: put callback in f_trace, and update it accordingly
-    def eval_frame(self, frame):
+    def eval_frame(self, frame: Frame):
         """Run a frame until it returns (somehow).
 
         Exceptions are raised, the return value is returned.

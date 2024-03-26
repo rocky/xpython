@@ -102,7 +102,7 @@ class ByteOp38(ByteOp37):
         self.vm.push(self.vm.frame.f_lasti)
         self.vm.jump(delta)
 
-    def POP_FINALLY(self, preserve_tos):
+    def POP_FINALLY(self, preserve_tos: int):
         """Cleans up the value stack and the block stack. If preserve_tos is
         not 0 TOS first is popped from the stack and pushed on the stack after
         performing other stack operations:

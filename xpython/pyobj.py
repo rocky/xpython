@@ -9,6 +9,7 @@ from copy import copy
 from sys import stderr
 
 from xdis import CO_GENERATOR, CO_ITERABLE_COROUTINE, iscode
+from xdis.cross_dis import findlinestarts
 from xdis.version_info import PYTHON3, PYTHON_VERSION_TRIPLE
 
 if PYTHON_VERSION_TRIPLE >= (3, 4):
@@ -18,8 +19,6 @@ else:
     class _AsyncGeneratorWrapper:
         pass
 
-
-import six
 
 import xpython.stdlib.inspect2 as inspect2
 import xpython.stdlib.inspect3 as inspect3
@@ -481,6 +480,9 @@ class Frame(object):
         self.inst_index = -1
         self.fallthrough = False
         self.last_op = None
+
+        # Keep a cache of line starts for this frame
+        self.line_starts = list(findlinestarts(self.f_code))
         return
 
     def __repr__(self):  # pragma: no cover
@@ -491,30 +493,17 @@ class Frame(object):
             self.f_lasti,
         )
 
-    def line_number(self):
+    def line_number(self) -> int:
         """Get the current line number the frame is executing."""
         # We don't keep f_lineno up to date, so calculate it based on the
         # instruction address and the line number table.
-        lnotab = self.f_code.co_lnotab
-        byte_increments = six.iterbytes(lnotab[0::2])
-        line_increments = six.iterbytes(lnotab[1::2])
-
-        byte_num = 0
-        line_num = self.f_code.co_firstlineno
-
-        for byte_incr, line_incr in zip(byte_increments, line_increments):
-            if isinstance(byte_incr, str):
-                byte_incr = ord(byte_incr)
-
-            byte_num += byte_incr
-            if byte_num > self.f_lasti:
+        last_line_number = 0
+        for offset, line_number in self.line_starts:
+            if offset > self.f_lasti:
                 break
-            if isinstance(line_incr, str):
-                line_incr = ord(line_incr)
+            last_line_number = line_number
 
-            line_num += line_incr
-
-        return line_num
+        return last_line_number
 
 
 class Traceback(object):
