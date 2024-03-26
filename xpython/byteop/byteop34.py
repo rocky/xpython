@@ -117,7 +117,7 @@ class ByteOp34(ByteOp33):
 
             native_fn = types.FunctionType(code, globs, name, tuple(defaults))
             native_fn.__kwdefaults__ = kwdefaults
-            native_fn.__annonations__ = annotations
+            native_fn.__annotations__ = annotations
             self.vm.fn2native[fn] = native_fn
 
         self.vm.push(fn)
