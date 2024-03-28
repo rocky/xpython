@@ -312,8 +312,8 @@ class ByteOpBase(object):
         ):
             log.debug("calling native function %s" % func.__name__)
         elif inspect.isclass(func):
+            pos_args = [self.vm.frame] + pos_args
             if func.__name__ == "super":
-                pos_args = [self.vm.frame] + pos_args
                 func = builtin_super
 
         retval = func(*pos_args, **named_args)

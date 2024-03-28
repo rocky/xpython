@@ -711,7 +711,10 @@ class ByteOp24(ByteOpBase):
         storage. Pushes a reference to the object the cell contains on the
         stack.
         """
-        self.vm.push(self.vm.frame.cells[name].get())
+        cell_obj = self.vm.frame.cells[name]
+        if hasattr(cell_obj, "get"):
+            cell_obj = cell_obj.get()
+        self.vm.push(cell_obj)
 
     def STORE_DEREF(self, name):
         """Stores TOS into the cell contained in slot i of the cell
