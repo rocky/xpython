@@ -1,6 +1,501 @@
+2024-03-28  rocky <rby@dusytfeet.com>
+
+	* xpython/version.py: Get ready for release 1.5.1
+
+2024-03-28  rocky <rby@dusytfeet.com>
+
+	* test/examples/functions/test_call_ex_kw.py,
+	xpython/byteop/byteop34.py: Address MAKE_FUNCTION 3.4 bug
+
+2024-03-28  rocky <rby@dusytfeet.com>
+
+	* test/Makefile: Add Makefile targets for 3.2, 3.4 and 2.7
+
+2024-03-25  rocky <rby@dusytfeet.com>
+
+	* admin-tools/merge-for-2.7.sh, admin-tools/merge-for-3.1.sh,
+	admin-tools/merge-for-3.3.sh: Administrivia
+
+2024-03-25  rocky <rby@dusytfeet.com>
+
+	* xpython/byteop/byteop34.py: Typo
+
+2024-03-25  rocky <rby@dusytfeet.com>
+
+	* admin-tools/merge-for-2.7.sh, admin-tools/merge-for-3.1.sh: 
+	Administrivia
+
+2024-03-25  rocky <rby@dusytfeet.com>
+
+	* .circleci/config-tox.yml, pyproject.toml, setup.py,
+	xpython/byteop/byteoppypy.py, xpython/vm.py: Use TOML setup.py...  Better PyPy tolerance
+
+2024-02-13  rocky <rby@dusytfeet.com>
+
+	* xpython/pyobj.py: Correct off-by-one in line starts
+
+2024-02-13  rocky <rby@dusytfeet.com>
+
+	* admin-tools/setup-master.sh, admin-tools/setup-python-2.7.sh,
+	admin-tools/setup-python-3.1.sh, admin-tools/setup-python-3.3.sh: Do
+	not install "finish" in source'd programs This will exit the shell anytime you have a shell error!
+
+2024-02-13  rocky <rby@dusytfeet.com>
+
+	* test/compile-file.py, test/vmtest.py, xpython/byteop/byteop.py,
+	xpython/byteop/byteop24.py, xpython/pyobj.py, xpython/vm.py: 3.11
+	tolerance and ...  Update branch for newer style.  Use xdis's findlinestarts for
+	portability
+
+2024-02-12  rocky <rby@dusytfeet.com>
+
+	* test/Makefile, test/simple_source/bug38/00_bug_dict_comp.py,
+	test/test-single-version.sh, xpython/byteop/byteop.py,
+	xpython/byteop/byteop32.py, xpython/byteop/byteop33.py,
+	xpython/byteop/byteop34.py: DRY argument parsing with xdis Expand cross testing capability
+
+2024-02-12  rocky <rby@dusytfeet.com>
+
+	* admin-tools/pyenv-3.3-3.5-versions: Administrivia
+
+2024-02-12  rocky <rby@dusytfeet.com>
+
+	* admin-tools/merge-for-3.1.sh, admin-tools/merge-for-3.3.sh: 
+	Administrivia
+
+2024-02-12  rocky <rby@dusytfeet.com>
+
+	* admin-tools/make-dist-2.7.sh: Start adding tests from uncompyle6
+
+2024-02-12  rocky <rby@dusytfeet.com>
+
+	* .circleci/config.yml, CONTRIBUTE.rst, requirements-dev.txt,
+	test/Makefile, test/test-single-version.sh, tox.ini: Start revising
+	to remove nose and nosetests
+
+2024-02-12  rocky <rby@dusytfeet.com>
+
+	* admin-tools/setup-master.sh, admin-tools/setup-python-3.3.sh: 
+	Admnistrivia
+
+2024-02-11  rocky <rby@dusytfeet.com>
+
+	* admin-tools/merge-for-3.3.sh: Add merge for Python 3.3
+
+2024-02-11  rocky <rby@dusytfeet.com>
+
+	* test/simple_source/bug34/02_make_closure.py,
+	xpython/byteop/byteop33.py: Current MAKE_FUNCTION for 3.3...  Was pickiing out annotation parameters from the wrong place
+
+2024-02-11  rocky <rby@dusytfeet.com>
+
+	* .pre-commit-config.yaml: Administrivia
+
+2024-01-10  rocky <rby@dusytfeet.com>
+
+	* xpython/stdlib/types34.py: async is not in 3.4
+
+2024-01-10  rocky <rby@dusytfeet.com>
+
+	* .pre-commit-config.yaml: Bump pre-commit hook
+
+2024-01-10  rocky <rby@dusytfeet.com>
+
+	* .pre-commit-config.yaml, xpython/__main__.py,
+	xpython/byteop/__init__.py, xpython/byteop/byteop.py,
+	xpython/byteop/byteop24.py, xpython/byteop/byteop27.py,
+	xpython/byteop/byteop32.py, xpython/byteop/byteop36.py,
+	xpython/byteop/byteop39.py, xpython/execfile.py, xpython/pyobj.py,
+	xpython/stdlib/builtins.py, xpython/stdlib/inspect2.py,
+	xpython/stdlib/inspect3.py, xpython/stdlib/inspectfor32.py,
+	xpython/vm.py, xpython/vmtrace.py: Convert % to f-strings
+
+2023-11-27  rocky <rb@dustyfeet.com>
+
+	* xpython/byteop/byteop25.py, xpython/byteop/byteop26.py,
+	xpython/byteop/byteop27.py, xpython/byteop/byteop32.py,
+	xpython/byteop/byteop33.py, xpython/byteop/byteop35.py,
+	xpython/byteop/byteop36.py, xpython/byteop/byteop36pypy.py,
+	xpython/byteop/byteop37.py, xpython/byteop/byteop37pypy.py,
+	xpython/byteop/byteop38.py, xpython/pyobj.py: More lint
+
+2023-11-28  rocky <rby@dusytfeet.com>
+
+	* xpython/byteop/byteop.py, xpython/execfile.py,
+	xpython/stdlib/builtins.py, xpython/vm.py, xpython/vmtrace.py: More
+	lint
+
+2023-11-27  rocky <rb@dustyfeet.com>
+
+	* xpython/byteop/byteop.py, xpython/byteop/byteop24.py: Misc lint
+	fixes
+
+2023-11-27  rocky <rby@dusytfeet.com>
+
+	* xpython/__init__.py, xpython/__main__.py,
+	xpython/byteop/byteop.py, xpython/byteop/byteop24.py,
+	xpython/byteop/byteop310.py, xpython/pyobj.py,
+	xpython/stdlib/__init__.py, xpython/stdlib/builtins.py,
+	xpython/stdlib/types34.py, xpython/vm.py, xpython/vmtrace.py: Black
+	and isort everything
+
+2023-11-27  rocky <rby@dusytfeet.com>
+
+	* admin-tools/setup-python-3.1.sh, xpython/pyobj.py: 2.7 interpreter
+	fixes...  When run on 2.7. Not totally sure this is needed here, but it
+	doesn't hurt.
+
+2023-11-27  rocky <rby@dusytfeet.com>
+
+	* admin-tools/setup-master.sh, xpython/vm.py: Handle older 3.3
+	unicode in code objects...  Better handled in  __eq__() ?
+
+2023-11-27  rocky <rby@dusytfeet.com>
+
+	* xpython/byteop/__init__.py, xpython/byteop/byteop.py,
+	xpython/byteop/byteop24.py, xpython/byteop/byteop26.py,
+	xpython/byteop/byteop27.py, xpython/byteop/byteop310.py,
+	xpython/byteop/byteop311.py, xpython/byteop/byteop32.py,
+	xpython/byteop/byteop35.py, xpython/byteop/byteop36.py,
+	xpython/byteop/byteop38.py, xpython/version_info.py: Shorten lines
+	and misc linting
+
+2023-11-27  rocky <rby@dusytfeet.com>
+
+	* .github/workflows/ubuntu.yml: Remove 3.10 testing on Ubuntu too...  Again nosetest package problem
+
+2023-11-27  rocky <rby@dusytfeet.com>
+
+	* .github/workflows/osx.yml, .github/workflows/windows.yml: Remove
+	3.10 testing on Windows and OSX for now...  nosetests is broken
+
+2023-11-27  rocky <rby@dusytfeet.com>
+
+	* .github/workflows/osx.yml, .github/workflows/ubuntu.yml,
+	.github/workflows/windows.yml: Expand testing
+
+2023-11-26  R. Bernstein <rocky@users.noreply.github.com>
+
+	* : Merge pull request #10 from sheisc/master Update call_function_with_args_resolved()
+
+2023-11-24  iron <sheisc@163.com>
+
+	* xpython/byteop/byteop.py: Update
+	call_function_with_args_resolved()
+
+2023-10-18  rocky <rby@dusytfeet.com>
+
+	* xpython/byteop/byteop311.py: Fill out docstrings in 3.11...  but we have a bit more work to do.
+
+2023-10-17  rocky <rby@dusytfeet.com>
+
+	* xpython/byteop/byteop311.py, xpython/vm.py: Fill out 3.11 opcodes
+	more.  Forgot to add byteop311.py
+
+2023-10-17  R. Bernstein <rocky@users.noreply.github.com>
+
+	* README.rst: Update README.rst
+
+2023-10-17  R. Bernstein <rocky@users.noreply.github.com>
+
+	* : Merge pull request #9 from rocky/improve-3.11 Improve 3.11
+
+2023-10-17  rocky <rby@dusytfeet.com>
+
+	* xpython/byteop/__init__.py, xpython/execfile.py,
+	xpython/stdlib/builtins.py, xpython/vm.py: First working 3.11 for
+	simple things
+
+2023-10-16  rocky <rby@dusytfeet.com>
+
+	* __pkginfo__.py, admin-tools/pyenv-newest-versions,
+	test/vmtest.py, xpython/byteop/__init__.py,
+	xpython/byteop/byteop32.py, xpython/version_info.py: Misc 3.10 and
+	3.11, and 3.12 fixes...  Not everything is fixed though.
+
+2023-06-10  rocky <rb@dustyfeet.com>
+
+	* admin-tools/pyenv-newest-versions, admin-tools/setup-master.sh: 
+	Bump testing versions
+
+2023-05-28  rocky <rby@dusytfeet.com>
+
+	* xpython/__init__.py, xpython/builtins.py,
+	xpython/byteop/__init__.py, xpython/byteop/byteop.py,
+	xpython/byteop/byteop24.py, xpython/byteop/byteop25.py,
+	xpython/byteop/byteop27.py, xpython/byteop/byteop310.py,
+	xpython/byteop/byteop32.py, xpython/byteop/byteop33.py,
+	xpython/byteop/byteop34.py, xpython/execfile.py, xpython/pyobj.py,
+	xpython/stdlib/builtins.py, xpython/stdlib/inspect2.py,
+	xpython/stdlib/inspect3.py, xpython/vm.py, xpython/vmtrace.py: 
+	flake, isort, & black
+
+2023-05-28  rocky <rby@dusytfeet.com>
+
+	* test/examples/functions/test_closures.py: More 3.8 bytecode tests
+
+2023-03-21  rocky <rby@dusytfeet.com>
+
+	* xpython/byteop/byteop310.py, xpython/byteop/byteop36.py,
+	xpython/pyobj.py, xpython/vmtrace.py: Misc lint
+
+2023-03-20  rocky <rby@dusytfeet.com>
+
+	* xpython/execfile.py, xpython/vmtrace.py: More PYTHON_VERSION
+	removal
+
+2023-03-20  rocky <rby@dusytfeet.com>
+
+	* xpython/stdlib/types34.py: Repalce PYTHON_VERSION with
+	PYTHON_VERSION_TRIPLE
+
+2023-01-30  rocky <rby@dusytfeet.com>
+
+	* xpython/builtins.py, xpython/stdlib/__init__.py: super() print
+	output closer to Python..  and import itertools more properly
+
+2023-01-27  rocky <rby@dusytfeet.com>
+
+	* admin-tools/pyenv-newest-versions, test/test_with.py,
+	xpython/execfile.py: Administrivia
+
+2023-01-26  rocky <rby@dusytfeet.com>
+
+	* admin-tools/setup-python-2.7.sh, xpython/stdlib/__init__.py,
+	xpython/stdlib/{itertools.py => itertools_compat.py}: 2.7
+	compatibility
+
+2023-01-26  rocky <rby@dusytfeet.com>
+
+	* xpython/byteop/byteop.py: Improve 3.3 class interpretation
+
+2023-01-26  rocky <rby@dusytfeet.com>
+
+	* xpython/stdlib/inspect3.py: Patched stdlib for older Pythons
+
+2023-01-26  rocky <rby@dusytfeet.com>
+
+	* : One more 3.4 bytecode
+
+2023-01-26  rocky <rby@dusytfeet.com>
+
+	* __pkginfo__.py, test/Makefile: Administrivia
+
+2023-01-26  rocky <rby@dusytfeet.com>
+
+	* admin-tools/setup-master.sh, xpython/byteop/byteop32.py: Bang on
+	3.2 MAKE_CLOSURE - not there yet though
+
+2023-01-26  rocky <rby@dusytfeet.com>
+
+	* admin-tools/setup-python-3.1.sh: Python 3.1 setup
+
+2023-01-25  rocky <rby@dusytfeet.com>
+
+	* xpython/byteop/byteop33.py: Correct 3.3 super
+
+2023-01-25  rocky <rby@dusytfeet.com>
+
+	* xpython/byteop/byteop.py, xpython/byteop/byteop32.py,
+	xpython/byteop/byteop33.py: Better 3.0-3.5 annotation handling...  And some closure stuff too
+
+2023-01-25  rocky <rby@dusytfeet.com>
+
+	* : Update bytecode
+
+2023-01-24  rocky <rby@dusytfeet.com>
+
+	* xpython/vm.py: Remove bogus python version setting in VM init
+
+2023-01-24  rocky <rby@dusytfeet.com>
+
+	* test/.gitignore: More ignore
+
+2023-01-24  rocky <rby@dusytfeet.com>
+
+	* : More ignore
+
+2023-01-23  rocky <rby@dusytfeet.com>
+
+	* xpython/builtins.py: "super" builtin is possibly a little closer
+
+2023-01-21  rocky <rby@dusytfeet.com>
+
+	* test/Makefile, test/examples/stmts/test_assign.py,
+	test/examples/stmts/test_augmented_assign.py,
+	test/examples/stmts/test_docstring.py,
+	test/examples/stmts/test_pass.py, test/test-compat.sh,
+	test/test-single-version.sh, xpython/builtins.py: Add testing stuff;
+	more testing in Makeifle
+
+2023-01-20  rocky <rby@dusytfeet.com>
+
+	* test/examples/class/test_super.py, xpython/builtins.py,
+	xpython/byteop/byteop.py, xpython/byteop/byteop24.py,
+	xpython/stdlib/builtins.py, xpython/vmtrace.py: Start to handle
+	"super" builtin...  Some adjustments made for newer xids: don't use float version but
+	use a version tuple instead.  Had dropped off IntArg parameter in
+	debugger callback hook.
+
+2023-01-14  rocky <rby@dusytfeet.com>
+
+	* xpython/byteop/byteop32.py, xpython/byteop/byteop33.py: More
+	cleanup of MAKE_{CLOSURE, FUNCTION} for 3.2-3.6
+
+2023-01-14  rocky <rby@dusytfeet.com>
+
+	* admin-tools/pyenv-newest-versions: Reduce testing versions for now
+
+2023-01-14  rocky <rby@dusytfeet.com>
+
+	* xpython/byteop/byteop24.py, xpython/byteop/byteop26.py,
+	xpython/byteop/byteop27.py, xpython/byteop/byteop310.py,
+	xpython/byteop/byteop32.py, xpython/byteop/byteop33.py,
+	xpython/byteop/byteop34.py, xpython/byteop/byteop36.py,
+	xpython/byteop/byteop38.py, xpython/byteop/byteop38pypy.py,
+	xpython/byteop/byteop39.py, xpython/stdlib/builtins.py,
+	xpython/vm.py: Start going over MAKE_{FUNCTION,CLOSURE} ...  and isort/black various files
+
+2023-01-14  rocky <rby@dusytfeet.com>
+
+	* admin-tools/pyenv-newest-versions: Use newer Python in master
+
+2022-12-20  rocky <rby@dusytfeet.com>
+
+	* xpython/version.py: Bump version
+
+2022-12-20  R. Bernstein <rocky@users.noreply.github.com>
+
+	* : Merge pull request #8 from LinuxUserGD/fix fix error "We need CPython 2.7, 3.2 .. 3.9 to compile source code;
+	you are running 4.0"
+
+2022-12-19  Linux User <34406967+LinuxUserGD@users.noreply.github.com>
+
+	* xpython/byteop/__init__.py, xpython/execfile.py,
+	xpython/stdlib/builtins.py, xpython/vm.py: Update setup.py
+
+2022-05-23  R. Bernstein <rocky@users.noreply.github.com>
+
+	* : Merge pull request #7 from Svenskithesource/patch-1 Typo (byteocde -> bytecode)
+
+2022-04-03  rocky <rby@dusytfeet.com>
+
+	* test/test-uncompyle6-bytecode.sh, xpython/execfile.py: Add
+	uncompyle6 test suite Remove stray debug statements
+
+2022-04-03  rocky <rby@dusytfeet.com>
+
+	* xpython/execfile.py: Fix bug in unsupported Python message Also add another test
+
+2022-04-02  rocky <rby@dusytfeet.com>
+
+	* xpython/stdlib/builtins.py, xpython/stdlib/builtins_36.py: Add
+	breakpoint stub and 3.6 list of builtins
+
+2022-04-02  rocky <rby@dusytfeet.com>
+
+	* admin-tools/print_builtins.py, xpython/byteop/byteop24.py,
+	xpython/execfile.py, xpython/stdlib/builtins.py,
+	xpython/stdlib/builtins_31.py, xpython/stdlib/builtins_32.py,
+	xpython/stdlib/builtins_33.py: Add more builtin compatible functions
+
+2022-04-02  rocky <rby@dusytfeet.com>
+
+	* admin-tools/pyenv-newest-versions, xpython/byteop/byteop24.py,
+	xpython/stdlib/builtins.py, xpython/stdlib/builtins_24.py,
+	xpython/stdlib/builtins_25.py, xpython/stdlib/builtins_26.py,
+	xpython/stdlib/builtins_27.py, xpython/stdlib/builtins_38.py: Move
+	forward on handling builtins
+
+2022-04-01  rocky <rby@dusytfeet.com>
+
+	* xpython/execfile.py, xpython/stdlib/builtins.py: Add cmp() builtin
+	compatibility ...  more generally start to allow builtin compatability between Python
+	versions
+
+2022-04-01  rocky <rby@dusytfeet.com>
+
+	* Makefile: Revise check-compat target
+
+2022-04-01  rocky <rby@dusytfeet.com>
+
+	* xpython/byteop/byteop24.py, xpython/byteop/byteop26.py,
+	xpython/stdlib/__init__.py, xpython/stdlib/itertools.py: 3.x
+	Compatibility for izip_longest and 2.x compatability for zip_longest
+
+2022-03-31  rocky <rby@dusytfeet.com>
+
+	* xpython/byteop/byteop24.py, xpython/byteop/byteop26.py: some
+	imports don't have __file__ like builtin imports
+
+2022-03-31  rocky <rby@dusytfeet.com>
+
+	* Makefile, xpython/byteop/byteop24.py, xpython/byteop/byteop27.py: 
+	LIST_APPEND() changes between 2.6 and 2.7...  Add some more self-checking bytecode
+
+2022-03-30  rocky <rby@dusytfeet.com>
+
+	* test/examples/stmts/test_import.py, xpython/byteop/byteop.py: 
+	implement BINARY_DIVIDE (2.x) Add import test
+
+2022-03-16  rocky <rby@dusytfeet.com>
+
+	* .github/workflows/osx.yml, .github/workflows/ubuntu.yml,
+	.github/workflows/windows.yml: Try expanding CI to 3.6 and 3.7 Also use workflows v3
+
+2022-03-09  rocky <rby@dusytfeet.com>
+
+	* xpython/execfile.py, xpython/pyobj.py,
+	xpython/stdlib/inspect2.py, xpython/stdlib/inspect3.py,
+	xpython/stdlib/inspectfor32.py, xpython/stdlib/types34.py: flake8
+	stuff
+
+2022-03-09  rocky <rby@dusytfeet.com>
+
+	* xpython/__init__.py: __init.py__ lint
+
+2022-03-07  rocky <rby@dusytfeet.com>
+
+	* : Add more tests from decompile3
+
+2022-03-07  rocky <rby@dusytfeet.com>
+
+	* test/examples/stmts/test_del.py: Add "del" test
+
+2022-03-07  rocky <rby@dusytfeet.com>
+
+	* xpython/byteop/byteop24.py, xpython/vm.py: Add DELETE_GLOBAL
+
+2021-11-28  rocky <rby@dusytfeet.com>
+
+	* admin-tools/setup-master.sh, admin-tools/setup-python-3.3.sh: 
+	Administrivia
+
 2021-11-25  rocky <rby@dusytfeet.com>
 
-	* xpython/version.py: Get ready for release 1.5.0
+	* : commit 4d8a9406fe95a73c79765e3fd4b1fe6588d48392 Author: rocky
+	<rby@dusytfeet.com> Date:   Thu Nov 25 12:27:38 2021 -0500
+
+2021-11-25  rocky <rby@dusytfeet.com>
+
+	* README.rst, test/add-test.sh: Typo
+
+2021-11-25  rocky <rby@dusytfeet.com>
+
+	* README.rst, admin-tools/make-dist-3.1-3.2.sh,
+	admin-tools/make-dist-3.3-3.5.sh: Update README.rst
+
+2021-11-25  rocky <rby@dusytfeet.com>
+
+	* admin-tools/make-dist-3.1-3.2.sh,
+	admin-tools/make-dist-3.3-3.5.sh, admin-tools/{make-dist.sh =>
+	make-newest-dist.sh}, admin-tools/pyenv-3.3-3.5-versions: Packaging
+	Administrivia
+
+2021-11-25  rocky <rby@dusytfeet.com>
+
+	* ChangeLog, NEWS.md, xpython/version.py: Get ready for release
+	1.5.0
 
 2021-11-25  rocky <rby@dusytfeet.com>
 
@@ -2974,3 +3469,4 @@
 2013-01-13  Ned Batchelder <ned@nedbatchelder.com>
 
 	* Ignore stuff
+
