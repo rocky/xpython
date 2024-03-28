@@ -86,8 +86,8 @@ assert 1 + 2 + 3 + 4 == posonly_sum(1, *(2, 3), **{"4": 4})
 # The stack order from least- to most-recent is:
 # default, keyword, annotation, closure
 # This changes in between Python 3.5 and 3.6.
-def f(a, b: 1, c: 2, d, e: 3 = 4, f=5, *g: 6, h: 7, i=8, j: 9 = 10, **k: 11) -> 12:
-    pass
+def f(a, b: int, c: int, d, e: int = 4, f=5, *g: int, h: int, i=int, j: int = 10, **k: dict) -> int:
+    return 12
 
 
 assert f.__annotations__ == {
@@ -97,8 +97,8 @@ assert f.__annotations__ == {
     "g": 6,
     "h": 7,
     "j": 9,
-    "k": 11,
-    "return": 12,
+    "k": {},
+    "return": int,
 }
 
 # From 3.6.9 test_keywordonly.py
