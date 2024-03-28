@@ -35,11 +35,30 @@
     $ remake -c check
     $ git commit --amend .
     $ git push   # get CI testing going early
-    $ remake -c check-full
+    $ ./admin-tools/check-newest-versions.sh
+
+# Python 3.3 to 3.5
+
+    $ ./admin-tools/merge-for-3.3.sh
+    $ make check-full
+    $ ./admin-tools/check-3.3-3.5-versions.sh
+    $ git push origin HEAD
+
+# Python 3.1 to 3.2
+
+    $ ./admin-tools/merge-for-3.1.sh
+    $ make check-full
+    $ git push origin HEAD
+
+# Python 2.4 to 2.7
+
+    $ ./admin-tools/merge-for-2.4.sh
 
 # Make packages and check
 
-    $ remake -c dist
+    $ ./admin-tools/make-dist-3.1-3.2.sh
+    $ ./admin-tools/make-dist-3.3-3.5.sh
+    $ ./admin-tools/make-newest-dist.sh
 	$ twine check dist/x[-_]python-$__version__*
 
 # Check package on github
@@ -47,8 +66,8 @@
 Todo: turn this into a script in `admin-tools`
 
 	$ [[ ! -d /tmp/gittest ]] && mkdir /tmp/gittest; pushd /tmp/gittest
-	$ pyenv local 3.7.9
-	$ pip install -e git://github.com/rocky/x-python.git#egg=x-python
+	$ pyenv local 3.7.16
+	$ pip install -e git+https://github.com/rocky/x-python.git#egg=x-python
 	$ xpython -V # see that new version appears
 	$ pip uninstall x-python
 	$ popd
