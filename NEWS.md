@@ -1,3 +1,19 @@
+1.5.1 2024-03-28
+================
+
+* Add Python 3.11 support
+* Start using branches to support running on older Pythons
+* Use newer xdis
+* Revise tests to work more along the lines of decompilers and xdis. This also lets us share test code.
+* Add Administrative merge code in support of new branches
+* Many bug fixes
+* Start to Modernize style, lint, use "black" and "isort"
+
+Some work to allow continuing on Python 3.12 and beyond
+* Remove use of nose/nosetest
+* Add pyproject.toml
+
+
 1.5.0 2021-11-25
 ================
 
