@@ -71,8 +71,14 @@ class ByteOp34(ByteOp33):
             annotate_names = self.vm.pop()
             # annotate count includes +1 for the above names
             annotate_objects = self.vm.popn(annotate_count - 1)
-            n = len(annotate_names)
-            assert n == len(annotate_objects)
+            n = len(annotate_objects)
+            # We can annotate a function return value, but
+            # that does is not a parameter object and not
+            # listed in annotate_objects
+            if annotate_names[-1] == "return":
+                assert n == len(annotate_names) - 1
+            else:
+                assert n == len(annotate_names)
             annotations = {annotate_names[i]: annotate_objects[i] for i in range(n)}
         else:
             annotations = {}
