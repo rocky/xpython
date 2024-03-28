@@ -48,7 +48,6 @@ check-3.2:
 check-3.3:
 	VERBOSE=$(VERBOSE) $(BASH) ./test-single-version.sh 3.3
 
->>>>>>> python-3.1-to-3.2
 #: Check Python 3.4 bytecode
 check-3.4:
 	VERBOSE=$(VERBOSE) $(BASH) ./test-single-version.sh 3.4
