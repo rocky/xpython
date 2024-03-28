@@ -393,7 +393,10 @@ class PyVM(object):
                 le1 = self.last_exception[1]
                 tail = ""
                 if le1:
-                    tail = "\n".join(le1.args)
+                    if hasattr(le1, "args"):
+                        tail = "\n".join(le1.args)
+                    else:
+                        tail = "\n".join(le1)
                 print(tail)
             raise
 

@@ -51,6 +51,11 @@ supported_versions = frozenset(
     ]
 )
 
+def assert_same_exception(e1, e2):
+    """Exceptions don't implement __eq__, check it ourselves."""
+    assert str(e1) == str(e2)
+    assert type(e1) == type(e2)
+
 
 class VmTestCase(unittest.TestCase):
     def do_one(self):
@@ -157,18 +162,13 @@ class VmTestCase(unittest.TestCase):
 
         sys.stdout = real_stdout
 
-        self.assert_same_exception(vm_exc, py_exc)
+        assert_same_exception(vm_exc, py_exc)
         self.assertEqual(vm_stdout.getvalue(), py_stdout.getvalue())
         self.assertEqual(vm_value, py_value)
         if raises:
             self.assertIsInstance(vm_exc, raises)
         else:
             self.assertIsNone(vm_exc)
-
-    def assert_same_exception(self, e1, e2):
-        """Exceptions don't implement __eq__, check it ourselves."""
-        self.assertEqual(str(e1), str(e2))
-        self.assertIs(type(e1), type(e2))
 
     def assert_runs_ok(self, path_or_code, raises=None, arg_type="string"):
         """Run `code` in our VM."""
