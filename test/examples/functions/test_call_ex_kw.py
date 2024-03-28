@@ -87,7 +87,7 @@ assert 1 + 2 + 3 + 4 == posonly_sum(1, *(2, 3), **{"4": 4})
 # default, keyword, annotation, closure
 # This changes in between Python 3.5 and 3.6.
 def f(a, b: int, c: int, d, e: int = 4, f=5, *g: int, h: int, i=int, j: int = 10, **k: dict) -> int:
-    pass
+    return 12
 
 
 assert f.__annotations__ == {
@@ -98,7 +98,7 @@ assert f.__annotations__ == {
     "h": 7,
     "j": 9,
     "k": {},
-    "return": 12,
+    "return": int,
 }
 
 # From 3.6.9 test_keywordonly.py
