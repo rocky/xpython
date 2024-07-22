@@ -14,4 +14,4 @@ PYTHON_VERSION=2.7.18
 mydir=$(dirname $bs)
 fulldir=$(readlink -f $mydir)
 (cd $fulldir/.. && checkout_version python-xdis python-2.4)
-checkout_finish-2.4-to-2.7
+checkout_finish python-2.4-to-2.7
