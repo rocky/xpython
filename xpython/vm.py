@@ -5,6 +5,7 @@
 from __future__ import print_function, division
 import linecache
 import logging
+import os
 import sys
 
 import six
@@ -28,6 +29,8 @@ from xpython.pyobj import Block, Frame, Traceback, traceback_from_frame
 
 PY2 = not PYTHON3
 log = logging.getLogger(__name__)
+
+XPYTHON_STACKCHECK = os.environ.get("XPYTHON_STACKCHECK", False)
 
 if PYTHON3:
 
@@ -234,6 +237,13 @@ class PyVM(object):
 
     def push(self, *vals):
         """Push values onto the value stack."""
+        new_size = len(self.frame.stack) + len(vals)
+
+        if XPYTHON_STACKCHECK:
+            if new_size > self.frame.f_code.co_stacksize:
+                print(("***Warning: exceeding declared max stacksize; have %s, "
+                      "max size: %s") % (new_size, self.f_code.co_stacksize))
+
         self.frame.stack.extend(vals)
 
     def set(self, i, value):
@@ -686,7 +696,7 @@ class PyVM(object):
         return why
 
     # Interpreter main loop
-    # This is analogous to CPython's _PyEval_EvalFramDefault() (in 3.x newer Python)
+    # This is analogous to CPython's _PyEval_EvalFrameDefault() (in 3.x newer Python)
     # or eval_frame() in older 2.x code.
     def eval_frame(self, frame):
         """Run a frame until it returns (somehow).
