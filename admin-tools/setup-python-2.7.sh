@@ -1,5 +1,5 @@
 #!/bin/bash
-PYTHON_VERSION=2.7.18
+# Check out python-2.7 and dependent development branches.
 pyenv local $PYTHON_VERSION
 
 owd=$(pwd)
@@ -8,10 +8,10 @@ if [[ $0 == $bs ]] ; then
     echo "This script should be *sourced* rather than run directly through bash"
     exit 1
 fi
+
+PYTHON_VERSION=2.7.18
+
 mydir=$(dirname $bs)
 fulldir=$(readlink -f $mydir)
-cd $fulldir/..
-(cd ../python-xdis/admin-tools && . ./setup-python-2.4.sh && git pull)
-git checkout python-2.4-to-2.7
-rm -v */.python-version >/dev/null 2>&1 || true
-cd $owd
+(cd $fulldir/.. && checkout_version python-xdis python-2.4)
+checkout_finish python-2.4-to-2.7
