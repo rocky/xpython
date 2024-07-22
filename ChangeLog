@@ -1,6 +1,37 @@
+2024-07-22  rocky <rby@dusytfeet.com>
+
+	* __pkginfo__.py, xpython/version.py: Get ready for release 1.5.2
+
+2024-05-26  rocky <rby@dusytfeet.com>
+
+	* .github/workflows/osx.yml, .github/workflows/ubuntu.yml,
+	.github/workflows/windows.yml: 3.7 CI testing is caput; use 3.10
+
+2024-05-26  rocky <rby@dusytfeet.com>
+
+	* .editorconfig: Typo
+
+2024-05-26  rocky <rby@dusytfeet.com>
+
+	* test/bytecode-3.10/bad-bytecode/no-return-bad-cpython-310.pyasm,
+	test/bytecode-3.10/bad-bytecode/short-stack-bad-cpython-310.pyasm,
+	xpython/vm.py: Add code stackize checking ...  but only if XPYTHON_MAXSTACK is set. There are bugs in testing that
+	need to be addressed for this to be turned on by default
+
+2024-03-29  rocky <rby@dusytfeet.com>
+
+	* admin-tools/pyenv-newest-versions, xpython/version.py: Bump
+	version and testing versions
+
 2024-03-28  rocky <rby@dusytfeet.com>
 
-	* xpython/version.py: Get ready for release 1.5.1
+	* admin-tools/how-to-make-a-release.md: Releasing is now in wiki
+
+2024-03-28  rocky <rby@dusytfeet.com>
+
+	* ChangeLog, NEWS.md, admin-tools/how-to-make-a-release.md,
+	admin-tools/pyenv-newest-versions, xpython/version.py: Get ready for
+	release 1.5.1
 
 2024-03-28  rocky <rby@dusytfeet.com>
 
