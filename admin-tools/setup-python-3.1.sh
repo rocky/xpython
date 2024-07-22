@@ -1,17 +1,18 @@
 #!/bin/bash
-PYTHON_VERSION=3.2.6
-pyenv local $PYTHON_VERSION
+# Check out python-3.1-to-3.2 and dependent development branches.
 
-owd=$(pwd)
 bs=${BASH_SOURCE[0]}
 if [[ $0 == $bs ]] ; then
     echo "This script should be *sourced* rather than run directly through bash"
     exit 1
 fi
+
+PYTHON_VERSION=3.2
+
+xpython_owd=$(pwd)
 mydir=$(dirname $bs)
 fulldir=$(readlink -f $mydir)
-cd $fulldir/..
-(cd ../python-xdis && . ./admin-tools/setup-python-3.0.sh && git pull)
-git checkout python-3.1-to-3.2
-rm -v */.python-version >/dev/null 2>&1 || true
-cd $owd
+cd $mydir
+. ./checkout_common.sh
+(cd $fulldir/.. && checkout_version python-xdis python-3.0)
+checkout_finish python-3.1-to-3.2
