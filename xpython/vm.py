@@ -231,8 +231,8 @@ class PyVM(object):
 
         if XPYTHON_STACKCHECK:
             if new_size > self.frame.f_code.co_stacksize:
-                print(f"***Warning: exceeding declared max stacksize; have {new_size}, "
-                      f"max size: {self.f_code.co_stacksize}")
+                print(("***Warning: exceeding declared max stacksize; have %s, "
+                      "max size: %s") % (new_size, self.f_code.co_stacksize))
 
         self.frame.stack.extend(vals)
 
