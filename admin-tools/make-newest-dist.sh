@@ -1,14 +1,8 @@
 #!/bin/bash
 PACKAGE=x-python
 
-# FIXME put some of the below in a common routine
-function finish {
-  cd $owd
-}
-
+xpython_owd=$(pwd)
 cd $(dirname ${BASH_SOURCE[0]})
-owd=$(pwd)
-trap finish EXIT
 
 if ! source ./pyenv-newest-versions ; then
     exit $?
@@ -41,3 +35,4 @@ for pyversion in $PYVERSIONS; do
 done
 
 python ./setup.py sdist
+cd $xpython_owd
