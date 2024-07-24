@@ -4,6 +4,10 @@
 PACKAGE=x-python
 PACKAGE_=x_python
 
+# FIXME put some of the below in a common routine
+function finish {
+  cd $xpython_owd
+}
 xpython_owd=$(pwd)
 trap finish EXIT
 
