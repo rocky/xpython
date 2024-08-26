@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2023 Rocky Bernstein
+# Copyright (C) 2023-2024 Rocky Bernstein
 # This program comes with ABSOLUTELY NO WARRANTY.
 # This is free software, and you are welcome to redistribute it
 # under certain conditions.
@@ -7,16 +7,34 @@
 """Bytecode Interpreter operations for Python 3.11
 """
 
+import inspect
 from typing import Any
 
+from xdis.version_info import PYTHON_VERSION_TRIPLE
+
 from xpython.byteop.byteop24 import Version_info
+from xpython.byteop.byteop36 import (
+    COMPREHENSION_FN_NAMES,
+    MAKE_FUNCTION_SLOT_NAMES,
+    MAKE_FUNCTION_SLOTS,
+)
 from xpython.byteop.byteop310 import ByteOp310
-from xpython.pyobj import traceback_from_frame
+from xpython.pyobj import Function, traceback_from_frame
+
+
+def fmt_make_function(vm, arg=None, repr_fn=repr) -> str:
+    """
+    returns the name of the function from the code object in the stack
+    """
+    fn_item = vm.top()
+    name = fn_item.co_name
+    return f" ({name})"
 
 
 class ByteOp311(ByteOp310):
     def __init__(self, vm):
         super(ByteOp310, self).__init__(vm)
+        self.stack_fmt["MAKE_FUNCTION"] = fmt_make_function
         self.hexversion = 0x30A00F0
         self.version = "3.11.0 (default, Oct 27 1955, 00:00:00)\n[x-python]"
         self.version_info = Version_info(3, 11, 0, "final", 0)
@@ -107,6 +125,76 @@ class ByteOp311(ByteOp310):
         """
         # FIXME
         raise self.vm.PyVMError("KW_NAMES not implemented")
+
+    # Changed in 3.11...
+    def MAKE_FUNCTION(self, argc: int):
+        """
+        Pushes a new function object on the stack. From bottom to top,
+        the consumed stack must consist of values if the argument
+        carries a specified flag value
+
+        * 0x01 a tuple of default values for positional-only and positional-or-keyword
+          parameters in positional order
+        * 0x02 a dictionary of the default values for the keyword-only parameters
+               the key is the parameter name and the value is the default value
+        * 0x04 a tuple of strings containing parameters  annotations
+        * 0x08 a tuple containing cells for free variables, making a closure
+          the code associated with the function (at TOS1)
+
+        Changed from version 3.10: Qualified name at STACK[-1] was removed.
+        """
+        code = self.vm.pop()
+
+        slot = {
+            "defaults": tuple(),
+            "kwdefaults": {},
+            "annotations": tuple(),
+            "closure": tuple(),
+        }
+        assert 0 <= argc < (1 << MAKE_FUNCTION_SLOTS)
+        have_param = list(
+            reversed([True if 1 << i & argc else False for i in range(4)])
+        )
+        for i in range(MAKE_FUNCTION_SLOTS):
+            if have_param[i]:
+                slot[MAKE_FUNCTION_SLOT_NAMES[i]] = self.vm.pop()
+
+        # FIXME: DRY with code in byteop3{2,4,6}.py
+
+        globs = self.vm.frame.f_globals
+
+        if (
+            not inspect.iscode(code)
+            and hasattr(code, "to_native")
+            and self.version_info[:2] == PYTHON_VERSION_TRIPLE[:2]
+        ):
+            code = code.to_native()
+
+        # Convert annotations tuple into dictionary
+        annotations = {}
+        annotations_tup = slot["annotations"]
+        for i in range(0, len(annotations_tup), 2):
+            annotations[annotations_tup[i]] = annotations_tup[i + 1]
+
+        fn_vm = Function(
+            name=code.co_name,
+            code=code,
+            globs=globs,
+            argdefs=slot["defaults"],
+            closure=slot["closure"],
+            vm=self.vm,
+            qualname=code.co_qualname,
+            kwdefaults=slot["kwdefaults"],
+            annotations=annotations,
+        )
+
+        if argc == 0 and code.co_name in COMPREHENSION_FN_NAMES:
+            fn_vm.has_dot_zero = True
+
+        if fn_vm._func:
+            self.vm.fn2native[fn_vm] = fn_vm._func
+
+        self.vm.push(fn_vm)
 
     def PRECALL(self, argc: int):
         """
